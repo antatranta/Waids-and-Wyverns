@@ -8,6 +8,9 @@ class CharacterInitiative:
         self.initiative = initiative
         self.health = health
 
+    def __str__(self): # pragma: no cover
+        return f"({self.initiative}) {self.name}: {self.health}"
+
 class InitiativeTracker:
     """Class to track intitative of players and monsters."""
 
@@ -39,3 +42,6 @@ class InitiativeTracker:
         :returns: List of CharacterInitiative
         """
         return sorted(self._characters, key=lambda c: c.initiative, reverse=True)
+
+    def __str__(self): # pragma: no cover
+        return str([str(char) for char in self.character_order()])
