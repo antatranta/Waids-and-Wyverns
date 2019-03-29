@@ -8,7 +8,6 @@ import pygame
 
 class Screen(ABC):
     """Base class for GUI screens."""
-    # pylint: disable=no-member
 
     screen_width = 640
     screen_height = 480

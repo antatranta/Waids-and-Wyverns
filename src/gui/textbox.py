@@ -7,7 +7,6 @@ from .utils import draw_text
 
 class TextBox:
     """Class for including a GUI TextBox."""
-    # pylint: disable=no-member
 
     def __init__(self, pos, size, initial_value=None, font=None):
         """
