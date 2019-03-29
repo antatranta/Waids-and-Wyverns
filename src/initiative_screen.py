@@ -71,12 +71,3 @@ class InitiativeTrackerScreen(Screen):
 
             self._namebox.value, self._initiativebox.value, self._healthbox.value = ('', '', '')
             self.tracker.add_character(char)
-
-
-if __name__ == "__main__":
-    import pygame
-    from initiative import InitiativeTracker
-    pygame.font.init()
-
-    tracker = InitiativeTracker()
-    InitiativeTrackerScreen(tracker).open()
