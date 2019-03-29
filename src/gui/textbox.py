@@ -2,6 +2,8 @@
 
 import pygame
 
+from .utils import draw_text
+
 
 class TextBox:
     """Class for including a GUI TextBox."""
@@ -27,8 +29,7 @@ class TextBox:
         pygame.draw.rect(screen, (255, 255, 255), self.rect)
         pygame.draw.rect(screen, border_color, self.rect, 1)
 
-        text = self.font.render(self.value, True, (0, 0, 0))
-        screen.blit(text, (self.rect.left + 1, self.rect.top))
+        draw_text(screen, self.font, self.value, (self.rect.left + 1, self.rect.top))
 
     def handle_events(self, events):
         """Handle events for this element."""
