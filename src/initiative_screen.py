@@ -32,6 +32,10 @@ class InitiativeTrackerScreen(Screen):
         self._healthbox.handle_events(events)
 
         for event in events:
+            if event.type == pygame.MOUSEBUTTONUP:
+                if self._add_button.collidepoint(pygame.mouse.get_pos()):
+                    self._add_character()
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self._add_character()
@@ -56,6 +60,12 @@ class InitiativeTrackerScreen(Screen):
                                     (self._initiativebox.rect.right, pos[1]))
         self._healthbox.rect.left = self._initiativebox.rect.right + health_width
 
+        self._add_button = pygame.Rect(self._healthbox.rect.right + 10, pos[1], 100, 30)
+        pygame.draw.rect(screen, (255, 255, 255), self._add_button)
+
+        add_color = (0, 0, 0) if self._valid_input() else (200, 200, 200)
+        draw_text(screen, self._font, "Add", self._add_button.center, add_color, center=True)
+
 
     def _draw_initiative_order(self, screen, pos):
         text = "Initiative Order:\n"
@@ -63,8 +73,17 @@ class InitiativeTrackerScreen(Screen):
             text += f"Initiative: {char.initiative}, Name: {char.name}, Health: {char.health}\n"
         draw_text(screen, self._font, text, pos)
 
+    def _valid_input(self):
+        if not (self._namebox.value and self._initiativebox.value and self._healthbox.value):
+            return False
+
+        if not self._initiativebox.value.isdigit() or not self._healthbox.value.isdigit():
+            return False
+
+        return True
+
     def _add_character(self):
-        if self._namebox.value and self._initiativebox.value and self._healthbox.value:
+        if self._valid_input():
             char = CharacterInitiative(self._namebox.value,
                                        self._initiativebox.value,
                                        self._healthbox.value)
