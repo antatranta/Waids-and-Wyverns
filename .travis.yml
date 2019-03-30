@@ -11,4 +11,4 @@ script:
   - "coverage run test.py"
 
 after_script:
-  - "coverage report --show-missing"
+  - "coverage report --show-missing --include=src*"
