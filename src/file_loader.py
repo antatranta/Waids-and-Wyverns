@@ -10,7 +10,7 @@ class MapFileLoader:
         self.map_files = []
         self.map_path = os.path.join(".", "assets", "images", "maps")
 
-    def load_file(self):
+    def load_map_files(self):
         """ Loads the map files into map_files list """
 
         for map_file in os.listdir(self.map_path):
@@ -28,6 +28,6 @@ class CharacterFileLoader:
     def load_character_files(self):
         """ Loads the character files into characters list """
 
-        for map_file in os.listdir(self.character_path):
-            if map_file.endswith(".png") or map_file.endswith(".jpg"):
-                self.characters.append(os.path.join(self.character_path, map_file))
+        for character_file in os.listdir(self.character_path):
+            if character_file.endswith(".png") or character_file.endswith(".jpg"):
+                self.characters.append(os.path.join(self.character_path, character_file))
