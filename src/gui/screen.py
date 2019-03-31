@@ -27,6 +27,7 @@ class Screen(ABC):
         while self.running:
             screen.fill(self.background_color)
 
+            self._update()
             self._handle_events(pygame.event.get())
             self._draw(screen)
 
@@ -48,6 +49,10 @@ class Screen(ABC):
     def _draw(self, screen):
         """Draws this screen."""
         raise NotImplementedError
+
+    def _update(self):
+        # pylint: disable=no-self-use
+        pass
 
 
 class ComponentScreen(Screen):
