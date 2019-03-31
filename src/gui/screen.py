@@ -21,6 +21,7 @@ class Screen(ABC):
         """Open this screen."""
         self.running = True
         screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        pygame.display.set_caption("Waids & Wyverns")
         frame_clock = pygame.time.Clock()
 
         while self.running:
