@@ -1,5 +1,7 @@
 import pygame
-from src.initiative_screen import InitiativeTrackerScreen
-pygame.font.init()
+from src.menu_screen import MainMenuScreen
 
-InitiativeTrackerScreen().open()
+if __name__ == "__main__":
+    pygame.font.init()
+
+    MainMenuScreen().open()

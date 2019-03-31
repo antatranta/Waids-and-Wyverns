@@ -53,6 +53,8 @@ class InitiativeTrackerScreen(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self._add_character()
+                if event.key == pygame.K_ESCAPE:
+                    self.close()
 
     def _draw_input(self, screen, pos):
         self._namebox.draw(screen)
