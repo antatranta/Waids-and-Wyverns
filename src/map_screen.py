@@ -32,5 +32,14 @@ class MapAndCharacterScreen(Screen):
         character_files = CharacterFileLoader().get_character_files()
 
         for i, character_file_location in enumerate(character_files):
-            self.character_images[i] = pygame.image.load(character_file_location)
+            self.character_images.append(pygame.image.load(character_file_location))
             screen.blit(self.character_images[i], (i*5, i*5))
+
+    def _handle_events(self, events):
+        """ Handle events in maps """
+        super()._handle_events(events)
+
+        for event in events:
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    self.close()

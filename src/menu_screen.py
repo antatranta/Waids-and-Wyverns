@@ -7,6 +7,7 @@ from .gui.screen import Screen
 from .initiative_screen import InitiativeTrackerScreen
 from .map_screen import MapAndCharacterScreen
 
+
 class MainMenuScreen(Screen):
     """Class to create a main menu screen."""
 
