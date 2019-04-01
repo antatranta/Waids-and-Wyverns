@@ -12,3 +12,7 @@ script:
 
 after_script:
   - "coverage report --show-missing --include=src*"
+
+notifications:
+  slack:
+    secure: "CIXZixppQCK2n5nLcgqbdm/cwfdmUT8sZjTz0FDc5jsorepo+KkrYM+myLlFfn6oFYkAa2otrq/dTn7Tqh89FmZ/0D8hxn7S6Iij6I9JL5DimooZupRwBO2xV87R67PaZxwUKS/i7aeZ0flxywtNLP/rxJXGary4VP0smU9UEzGAI7h+wsOJafntTRtOcatIgi4z9mDX4iaP5YQ9RQgcQIjZ5tk7G7W1ffVoAznZtqoluFf4tsWNI+11BkYNDMhVB/nx48Q9gQeZwzwDgy5ZtiJtJuqkrjzjQ/3lfs/0yHJuVdpGQM37QfOY0uL361VLTR3hHDD+U3Zxk8R3VhMtH1sdwAtcWE0JEWCj8ggw1rHs4Y+/BVRGlexK7HSRRByv0BLIp+TTvx/sp6CXpYTWEjImG8mqOS5rdGXZCdPBPQkxdDv4kX2Bo3ffJF8uQPtgx9gKtx7Jhln7qX0oorvGa0kDiONpZ+Ma4oXJTFfiRM8OAQ24K7A5w3pBHn+W0OAdes6bN68lwPw3rlL5OUgoRXQHw32sFvSgz9nX5JJEpsZxMgBeeNe1dnNVOu3Oo/KaafDGiVaPWCi3gScXU5nQSJ/02WGcsyL3ZFcy/gHVTb5hWWmQ+MKKN4hfPHDDjBJLSet87TVZRstg9WacUUgimI5ExdQ+aZ79azuBw+pVKH8="
