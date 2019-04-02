@@ -21,7 +21,7 @@ class MapAndCharacterScreen(Screen):
 
     def _draw_map(self, screen):
         """ Load the maps into an array of Surface (pygame) of images"""
-        map_files = MapFileLoader().get_map_files()
+        map_files = MapFileLoader().load_map_files()
 
         for i, map_file_location in enumerate(map_files):
             self.map_images.append(pygame.image.load(map_file_location))
@@ -29,7 +29,7 @@ class MapAndCharacterScreen(Screen):
 
     def _draw_characters(self, screen):
         """ Load the characters into an array of Surface (pygame) of images"""
-        character_files = CharacterFileLoader().get_character_files()
+        character_files = CharacterFileLoader().load_character_files()
 
         for i, character_file_location in enumerate(character_files):
             self.character_images.append(pygame.image.load(character_file_location))
