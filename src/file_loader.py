@@ -1,14 +1,13 @@
 """ All utilities and class for map preloading into a list """
-#pylint: disable=too-few-public-methods
 import os
 
 
 class MapFileLoader:
     """ Class to load the map files (png, jpg, etc) """
 
-    def __init__(self):
+    def __init__(self, map_path=None):
         self.maps = []
-        self.map_path = os.path.join(".", "assets", "images", "maps")
+        self.map_path = map_path or os.path.join(".", "assets", "images", "maps")
         self.load_map_files()
 
     def load_map_files(self):
@@ -25,9 +24,9 @@ class MapFileLoader:
 class CharacterFileLoader:
     """ Class to load the character files (png, jpg, etc) """
 
-    def __init__(self):
+    def __init__(self, character_path=None):
         self.characters = []
-        self.character_path = os.path.join(".", "assets", "images", "characters")
+        self.character_path = character_path or os.path.join(".", "assets", "images", "characters")
         self.load_character_files()
 
     def load_character_files(self):
