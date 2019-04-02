@@ -15,8 +15,11 @@ class MainMenuScreen(Screen):
         super().__init__()
         self._font = pygame.font.SysFont('comicsansms', 18)
         self._buttons = [
-            ("Maps", pygame.Rect(super().screen_width / 2 - 200, 10, 400, 30), MapAndCharacterScreen().open),
-            ("Initiative", pygame.Rect(super().screen_width / 2 - 200, 50, 400, 30), InitiativeTrackerScreen().open)]
+            ("Maps", pygame.Rect(super().screen_width / 2 - 200, 10, 400, 30),
+             MapAndCharacterScreen().open),
+            ("Initiative",
+             pygame.Rect(super().screen_width / 2 - 200, 50, 400, 30),
+             InitiativeTrackerScreen().open)]
 
     def _draw(self, screen):
         for text, rect, _ in self._buttons:
@@ -30,4 +33,4 @@ class MainMenuScreen(Screen):
                 for _, rect, action in self._buttons:
                     if rect.collidepoint(pygame.mouse.get_pos()):
                         action()
-                        break;
+                        break

@@ -64,7 +64,8 @@ class MapAndCharacterScreen(Screen):
         # for rect in self.character_rect:
         #    if rect.collidepoint(pygame.mouse.get_pos()):
         #        for rect_collision in character_rect_collision:
-        #            if character_rect_collision.index(rect_collision) != self.character_rect.index(rect):
+        #            if character_rect_collision.index(rect_collision)
+        #               != self.character_rect.index(rect):
         #                if rect.colliderect(rect_collision):
         #                    rect.move_ip(rect.x + 50, rect.y + 50)
 
@@ -73,7 +74,6 @@ class MapAndCharacterScreen(Screen):
                 rect.center = pygame.mouse.get_pos()
 
     def _handle_events(self, events):
-        #pylint: disable=no-member
         """ Handle events in maps """
         super()._handle_events(events)
 
