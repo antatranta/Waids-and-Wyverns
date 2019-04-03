@@ -12,13 +12,13 @@ class DiceRollerScreen(Screen):
 
     def __init__(self):
         super().__init__()
-        self._d4box = TextBox((0, 0), (50, 30), " ")
-        self._d6box = TextBox((0, 0), (50, 30), " ")
-        self._d8box = TextBox((0, 0), (50, 30), " ")
-        self._d10box = TextBox((0, 0), (50, 30), " ")
-        self._d100box = TextBox((0, 0), (50, 30), " ")
-        self._d12box = TextBox((0, 0), (50, 30), " ")
-        self._d20box = TextBox((0, 0), (50, 30), " ")
+        self._d4box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d6box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d8box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d10box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d100box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d12box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
+        self._d20box = TextBox((0, 0), (50, 30), allowed=NUMERIC_KEYS, center=True)
         self._font = pygame.font.SysFont('comicsansms', 18)
 
     def _draw(self, screen):
@@ -27,6 +27,14 @@ class DiceRollerScreen(Screen):
 
     def _handle_events(self, events):
         super()._handle_events(events)
+
+        self._d4box.handle_events(events)
+        self._d6box.handle_events(events)
+        self._d8box.handle_events(events)
+        self._d10box.handle_events(events)
+        self._d12box.handle_events(events)
+        self._d20box.handle_events(events)
+        self._d100box.handle_events(events)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
