@@ -68,3 +68,15 @@ def draw_text(screen, font, text, pos, color=(0, 0, 0), *,
         y += int(height)
 
     return (max_width, total_height)
+
+def load_image(path, scale=None):
+    """
+    Load an image from some path.
+
+    :param path: String path to the image.
+    :param scale: Size (width, height) to scale image to.
+    """
+    image = pygame.image.load(path)
+    if scale is not None:
+        image = pygame.transform.smoothscale(image, scale)
+    return image
