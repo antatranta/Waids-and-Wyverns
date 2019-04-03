@@ -2,16 +2,14 @@
 
 import pygame
 
-from .dice_roller import DiceRoller
 from .gui.screen import Screen
-from .gui.textbox import TextBox, NUMERIC_KEYS
-from .gui.utils import draw_text
 
 
 class DiceRollerScreen(Screen):
     """Class to start graphical dice roller"""
-    def __init__(self):
+    def __init__(self, screen):
         super().__init__()
+        self.screen = screen
         self._font = pygame.font.SysFont('comicsansms', 18)
 
     def _draw(self, screen):

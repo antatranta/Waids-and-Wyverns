@@ -2,5 +2,7 @@
 
 
 class DiceRoller:
+    """Class to implement Dice Roller"""
+
     def __init__(self, name):
         self.name = name
