@@ -16,10 +16,10 @@ class FileLoader:
         """
         self.root = root
         self.filetypes = filetypes if filetypes is not None else ['']
-        Tk().withdraw()
 
     def file_dialog(self):
         """Open a file dialog to select file."""
+        Tk().withdraw()
         filetypes = [("Files", [f"*{suffix}" for suffix in self.filetypes]), ("All Files", "*")]
         return filedialog.askopenfilename(initialdir=self.root, filetypes=filetypes)
 
