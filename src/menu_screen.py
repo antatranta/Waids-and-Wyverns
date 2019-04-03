@@ -6,6 +6,7 @@ from .gui.utils import draw_text
 from .gui.screen import Screen
 from .initiative_screen import InitiativeTrackerScreen
 from .map_screen import MapAndCharacterScreen
+from .dice_roller_screen import DiceRollerScreen
 
 
 class MainMenuScreen(Screen):
@@ -19,7 +20,10 @@ class MainMenuScreen(Screen):
              MapAndCharacterScreen().open),
             ("Initiative",
              pygame.Rect(super().screen_width / 2 - 200, 50, 400, 30),
-             InitiativeTrackerScreen().open)]
+             InitiativeTrackerScreen().open),
+            ("Dice Roller",
+             pygame.Rect(super().screen_width / 2 - 200, 90, 400, 30),
+             DiceRollerScreen().open)]
 
     def _draw(self, screen):
         for text, rect, _ in self._buttons:
