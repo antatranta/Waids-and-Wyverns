@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin, load_image, draw_text
+from .gui.utils import DraggableMixin, load_image, draw_text, Button
 
 
 class MapAndCharacterScreen(Screen):
@@ -18,6 +18,26 @@ class MapAndCharacterScreen(Screen):
         self._characters = []
         self._map = None
         self._remove_mode = False
+
+        self._buttons = self._init_buttons([("Add Character", self._load_charcter),
+                                            ("Change Map", self._load_map),
+                                            ("Toggle Remove", self._toggle_remove_mode)])
+
+    @classmethod
+    def _init_buttons(cls, options):
+        buttons = []
+        button_size = (cls.screen_width / len(options), 30)
+
+        x_pos = 0
+        for text, action in options:
+            pos = (x_pos, cls.screen_height - button_size[1])
+            buttons.append(Button(text, pos, button_size, action))
+            x_pos += button_size[0]
+
+        return buttons
+
+    def _toggle_remove_mode(self):
+        self._remove_mode = not self._remove_mode
 
     def _load_map(self):
         path = self.map_loader.file_dialog()
@@ -45,6 +65,9 @@ class MapAndCharacterScreen(Screen):
         for character in self._characters:
             character.draw(screen)
 
+        for button in self._buttons:
+            button.draw(screen)
+
         if self._remove_mode:
             draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
 
@@ -54,6 +77,9 @@ class MapAndCharacterScreen(Screen):
 
         for character in self._characters:
             character.handle_events(events)
+
+        for button in self._buttons:
+            button.handle_events(events)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP and self._remove_mode:

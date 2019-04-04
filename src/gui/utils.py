@@ -1,7 +1,48 @@
 """Utilities for GUI related actions."""
+# pylint: disable=too-many-arguments
 
 import pygame
 
+
+class Button:
+    """Class to assist in creation of buttons."""
+
+    def __init__(self, text, pos, size, action, params=None, enabled=True):
+        """
+        Initialize a single Button.
+
+        :param text: Text to write on button.
+        :parm pos: Position to place topleft corner of button (x, y).
+        :parm size: Size of button (width, height).
+        :parm action: Function to call when clicked.
+        :parm params: Parameters to call action with when called.
+        :parm enabled: Parameters to call action with when called.
+        """
+        self.text = text
+        self.rect = pygame.Rect(pos, size)
+        self.action = action
+        self.params = params if params is not None else []
+        self.enabled = enabled
+        self._font = pygame.font.SysFont('comicsansms', 18)
+
+    def draw(self, screen):
+        """Draw this button to screen."""
+        color = (255, 255, 255)
+        text_color = (0, 0, 0) if self.enabled else (200, 200, 200)
+
+        if self.rect.collidepoint(pygame.mouse.get_pos()) and self.enabled:
+            color = (220, 220, 220)
+
+        pygame.draw.rect(screen, color, self.rect)
+        pygame.draw.rect(screen, text_color, self.rect, 2)
+        draw_text(screen, self._font, self.text, self.rect.center, center=True, color=text_color)
+
+    def handle_events(self, events):
+        """Handle events for this button."""
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
+                if self.enabled:
+                    self.action(*self.params)
 
 class DraggableMixin:
     """
