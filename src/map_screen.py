@@ -19,7 +19,7 @@ class MapAndCharacterScreen(Screen):
         self._map = None
         self._remove_mode = False
 
-        self._buttons = self._init_buttons([("Add Character", self._load_charcter),
+        self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
 
