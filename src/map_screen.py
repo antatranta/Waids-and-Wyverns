@@ -34,6 +34,13 @@ class MapAndCharacterScreen(Screen):
         """ Draw function to draw all necessary maps and characters on the screen """
         if self._map:
             screen.blit(self._map, (0, 0))
+        else:
+            draw_text(screen, self._font, "Press \"m\" to open up the maps folder",
+                      (0, 0), color=(0, 0, 0))
+            draw_text(screen, self._font, "Press \"c\" to open up the characters folder",
+                      (0, 25), color=(0, 0, 0))
+            draw_text(screen, self._font, "Press \"d\" to toggle character removal",
+                      (0, 50), color=(0, 0, 0))
 
         for character in self._characters:
             character.draw(screen)
@@ -64,7 +71,9 @@ class MapAndCharacterScreen(Screen):
                 if event.key == pygame.K_d:
                     self._remove_mode = not self._remove_mode
 
+
 class _Character(DraggableMixin):
+    """ Allows characters to be dragged """
 
     def __init__(self, img, pos=(0, 0)):
         DraggableMixin.__init__(self, pos)
