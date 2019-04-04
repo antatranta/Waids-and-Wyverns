@@ -20,12 +20,14 @@ class MapAndCharacterScreen(Screen):
 
     def _load_map(self):
         path = self.map_loader.file_dialog()
-        self._map = load_image(path, scale=(self.screen_width, self.screen_height))
+        if path != "":
+            self._map = load_image(path, scale=(self.screen_width, self.screen_height))
 
     def _load_charcter(self):
         path = self.character_loader.file_dialog()
-        img = load_image(path, scale=(100, 100))
-        self._characters.append(_Character(img))
+        if path != "":
+            img = load_image(path, scale=(100, 100))
+            self._characters.append(_Character(img))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
