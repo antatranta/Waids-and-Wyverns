@@ -1,4 +1,5 @@
 """ All utilities and classes for Sound Player Graphical Display """
+#pylint: disable=no-self-use
 
 import pygame
 
