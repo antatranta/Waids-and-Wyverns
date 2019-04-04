@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin, load_image
+from .gui.utils import DraggableMixin, load_image, draw_text
 
 
 class MapAndCharacterScreen(Screen):
@@ -17,6 +17,7 @@ class MapAndCharacterScreen(Screen):
         super().__init__()
         self._characters = []
         self._map = None
+        self._remove_mode = False
 
     def _load_map(self):
         path = self.map_loader.file_dialog()
@@ -37,6 +38,9 @@ class MapAndCharacterScreen(Screen):
         for character in self._characters:
             character.draw(screen)
 
+        if self._remove_mode:
+            draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
+
     def _handle_events(self, events):
         """ Handle events in maps """
         super()._handle_events(events)
@@ -45,6 +49,11 @@ class MapAndCharacterScreen(Screen):
             character.handle_events(events)
 
         for event in events:
+            if event.type == pygame.MOUSEBUTTONUP and self._remove_mode:
+                for character in self._characters:
+                    if character.rect.collidepoint(event.pos):
+                        self._characters.remove(character)
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
@@ -52,6 +61,8 @@ class MapAndCharacterScreen(Screen):
                     self._load_map()
                 if event.key == pygame.K_c:
                     self._load_charcter()
+                if event.key == pygame.K_d:
+                    self._remove_mode = not self._remove_mode
 
 class _Character(DraggableMixin):
 
