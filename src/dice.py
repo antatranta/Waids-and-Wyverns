@@ -2,21 +2,19 @@
 # Goal: https://www.wizards.com/dnd/dice/dice.htm
 import random
 
+
 class DiceRoll:
     """ Class to create dice """
 
-    def __init__(self, times, dice_type):
-        self.times = times
-        self.dice_type = dice_type
-        self._roll(self.times, self.dice_type)
-
     def _roll(self, times, dice_type):
-        """ Rolls dice x amount of times """
         count = 0
-        # total = 0
+        total = 0
         while count < times:
-            print(self.check_dice_type(dice_type))
+            roll = self.check_dice_type(dice_type)
+            print(roll)
+            total += roll
             count += 1
+        print('Total: ' + str(total))
 
     @classmethod
     def _modifier(cls, choice, total):
@@ -25,9 +23,9 @@ class DiceRoll:
         negative = False
         mod_num = input("Enter modifier value")
 
-        #Positive vs Negative selection button
+        # Positive vs Negative selection button
         if choice == positive:
-            #find num value then add to dice roll
+            # find num value then add to dice roll
             total += mod_num
 
         if choice == negative:
@@ -91,5 +89,5 @@ class DiceRoll:
 
         return value
 
-#if __name__ == "__main__":
-    #DiceRoll.check_dice_type()
+# if __name__ == "__main__":
+    # DiceRoll.check_dice_type()
