@@ -14,7 +14,6 @@ class MainMenuScreen(Screen):
 
     def __init__(self):
         super().__init__()
-        self._font = pygame.font.SysFont('comicsansms', 18)
         self._buttons = [
             ("Maps", pygame.Rect(super().screen_width / 2 - 200, 10, 400, 30),
              MapAndCharacterScreen().open),

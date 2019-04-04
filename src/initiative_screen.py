@@ -21,8 +21,6 @@ class InitiativeTrackerScreen(Screen):
         self._add_button = pygame.Rect(0, 0, 0, 0)
         self._entries = {}
 
-        self._font = pygame.font.SysFont('comicsansms', 18)
-
     def _update(self):
         for char in self.tracker.character_order():
             if char not in self._entries:
