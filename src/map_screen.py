@@ -19,7 +19,7 @@ class MapAndCharacterScreen(Screen):
         self._map = None
         self._remove_mode = False
 
-        self._buttons = self._init_buttons([("Add Character", self._load_charcter),
+        self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
 
@@ -44,7 +44,7 @@ class MapAndCharacterScreen(Screen):
         if path != "":
             self._map = load_image(path, scale=(self.screen_width, self.screen_height))
 
-    def _load_charcter(self):
+    def _load_character(self):
         path = self.character_loader.file_dialog()
         if path != "":
             img = load_image(path, scale=(100, 100))
@@ -54,13 +54,6 @@ class MapAndCharacterScreen(Screen):
         """ Draw function to draw all necessary maps and characters on the screen """
         if self._map:
             screen.blit(self._map, (0, 0))
-        else:
-            draw_text(screen, self._font, "Press \"m\" to open up the maps folder",
-                      (0, 0), color=(0, 0, 0))
-            draw_text(screen, self._font, "Press \"c\" to open up the characters folder",
-                      (0, 25), color=(0, 0, 0))
-            draw_text(screen, self._font, "Press \"d\" to toggle character removal",
-                      (0, 50), color=(0, 0, 0))
 
         for character in self._characters:
             character.draw(screen)
@@ -90,12 +83,6 @@ class MapAndCharacterScreen(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
-                if event.key == pygame.K_m:
-                    self._load_map()
-                if event.key == pygame.K_c:
-                    self._load_charcter()
-                if event.key == pygame.K_d:
-                    self._remove_mode = not self._remove_mode
 
 
 class _Character(DraggableMixin):
