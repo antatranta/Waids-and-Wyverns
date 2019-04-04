@@ -21,6 +21,14 @@ class DiceRollerScreen(Screen):
         self._d12box = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
         self._d20box = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
 
+        self._d4_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d6_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d8_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d10_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d100_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d12_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+        self._d20_modifier = TextBox((0, 0), (50, 30), "0", allowed=NUMERIC_KEYS, center=True)
+
         self._roll_button = pygame.Rect(0, 0, 0, 0)
         self._font = pygame.font.SysFont('comicsansms', 18)
 
@@ -38,6 +46,15 @@ class DiceRollerScreen(Screen):
         self._d12box.handle_events(events)
         self._d20box.handle_events(events)
         self._d100box.handle_events(events)
+
+        self._d4_modifier.handle_events(events)
+        self._d6_modifier.handle_events(events)
+        self._d8_modifier.handle_events(events)
+        self._d10_modifier.handle_events(events)
+        self._d12_modifier.handle_events(events)
+        self._d20_modifier.handle_events(events)
+        self._d100_modifier.handle_events(events)
+
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
@@ -69,7 +86,7 @@ class DiceRollerScreen(Screen):
         self._d10box.draw(screen)
         self._d100box.draw(screen)
         self._d12box.draw(screen)
-        self._d20box.draw(screen)        
+        self._d20box.draw(screen)
 
         d4_width, _ = draw_text(screen, self._font, "# of D4 dice: ", (10, 0))
         self._d4box.rect.left = d4_width + 10
