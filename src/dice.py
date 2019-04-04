@@ -84,4 +84,4 @@ class DiceRoll:
             print(error_message)
 
 if __name__ == "__main__":
-    DiceRoll.check_dice_type()
+    #DiceRoll.check_dice_type()
