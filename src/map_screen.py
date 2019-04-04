@@ -24,7 +24,7 @@ class MapAndCharacterScreen(Screen):
         if path != "":
             self._map = load_image(path, scale=(self.screen_width, self.screen_height))
 
-    def _load_charcter(self):
+    def _load_character(self):
         path = self.character_loader.file_dialog()
         if path != "":
             img = load_image(path, scale=(100, 100))

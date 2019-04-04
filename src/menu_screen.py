@@ -7,6 +7,7 @@ from .gui.screen import Screen
 from .initiative_screen import InitiativeTrackerScreen
 from .map_screen import MapAndCharacterScreen
 from .dice_roller_screen import DiceRollerScreen
+from .sound_screen import SoundPlayerScreen
 
 
 class MainMenuScreen(Screen):
@@ -22,7 +23,10 @@ class MainMenuScreen(Screen):
              InitiativeTrackerScreen().open),
             ("Dice Roller",
              pygame.Rect(super().screen_width / 2 - 200, 90, 400, 30),
-             DiceRollerScreen().open)]
+             DiceRollerScreen().open),
+            ("Sound Player",
+             pygame.Rect(super().screen_width / 2 - 200, 130, 400, 30),
+             SoundPlayerScreen().open)]
 
     def _draw(self, screen):
         for text, rect, _ in self._buttons:

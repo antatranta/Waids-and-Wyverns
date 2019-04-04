@@ -2,6 +2,7 @@
 
 import pygame
 
+
 class DraggableMixin:
     """
     Mixin Class to allow objects to be draggable.
@@ -67,7 +68,8 @@ def draw_text(screen, font, text, pos, color=(0, 0, 0), *,
 
         y += int(height)
 
-    return (max_width, total_height)
+    return max_width, total_height
+
 
 def load_image(path, scale=None):
     """
