@@ -2,64 +2,67 @@
 
 import pygame
 
-from .file_loader import MapFileLoader, CharacterFileLoader
+from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin
+from .gui.utils import DraggableMixin, load_image, draw_text, Button
 
 
 class MapAndCharacterScreen(Screen):
     """ Class to start Map and Character Screen """
 
+    map_loader = MapFileLoader()
+    character_loader = CharacterFileLoader()
+
     def __init__(self):
         super().__init__()
-        self.map_width = super().screen_width
-        self.map_height = super().screen_height
-        self.map_image = self._load_map()
         self._characters = []
-        self.character_images = self._load_characters()
-        self.character_dragging = False
+        self._map = None
+        self._remove_mode = False
+
+        self._buttons = self._init_buttons([("Add Character", self._load_character),
+                                            ("Change Map", self._load_map),
+                                            ("Toggle Remove", self._toggle_remove_mode)])
+
+    @classmethod
+    def _init_buttons(cls, options):
+        buttons = []
+        button_size = (cls.screen_width / len(options), 30)
+
+        x_pos = 0
+        for text, action in options:
+            pos = (x_pos, cls.screen_height - button_size[1])
+            buttons.append(Button(text, pos, button_size, action))
+            x_pos += button_size[0]
+
+        return buttons
+
+    def _toggle_remove_mode(self):
+        self._remove_mode = not self._remove_mode
+
+    def _load_map(self):
+        path = self.map_loader.file_dialog()
+        if path != "":
+            self._map = load_image(path, scale=(self.screen_width, self.screen_height))
+
+    def _load_character(self):
+        path = self.character_loader.file_dialog()
+        if path != "":
+            img = load_image(path, scale=(100, 100))
+            self._characters.append(_Character(img))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
-        self._draw_map(screen)
-        self._draw_characters(screen)
+        if self._map:
+            screen.blit(self._map, (0, 0))
 
-    def _draw_map(self, screen):
-        """ Draws the map to the screen """
-        screen.blit(self.map_image, (0, 0))
-
-    def _draw_characters(self, screen):
-        """ Draws the character to the screen """
         for character in self._characters:
             character.draw(screen)
 
-    def _load_map(self):
-        """ Load the maps into an array of Surface (pygame) of images"""
-        map_files = MapFileLoader().load_map_files()
+        for button in self._buttons:
+            button.draw(screen)
 
-        map_image = pygame.image.load(map_files[0])
-        map_image = pygame.transform.smoothscale(map_image, (self.map_width, self.map_height))
-
-        return map_image
-
-    def _load_characters(self):
-        """ Load the characters into an array of Surface (pygame) of images"""
-        character_files = CharacterFileLoader().load_character_files()
-
-        character_images = []
-        for i, character_file_location in enumerate(character_files):
-            img = pygame.image.load(character_file_location)
-            img = pygame.transform.smoothscale(img, (100, 100))
-
-            self._characters.append(_Character(img, (i * 100, 0)))
-
-        return character_images
-
-    def _update(self):
-        """ Updates the screen when click and dragging """
-        if self.character_dragging:
-            for rect in self.character_rect:
-                rect.center = pygame.mouse.get_pos()
+        if self._remove_mode:
+            draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
 
     def _handle_events(self, events):
         """ Handle events in maps """
@@ -68,12 +71,22 @@ class MapAndCharacterScreen(Screen):
         for character in self._characters:
             character.handle_events(events)
 
+        for button in self._buttons:
+            button.handle_events(events)
+
         for event in events:
+            if event.type == pygame.MOUSEBUTTONUP and self._remove_mode:
+                for character in self._characters:
+                    if character.rect.collidepoint(event.pos):
+                        self._characters.remove(character)
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
 
+
 class _Character(DraggableMixin):
+    """ Allows characters to be dragged """
 
     def __init__(self, img, pos=(0, 0)):
         DraggableMixin.__init__(self, pos)

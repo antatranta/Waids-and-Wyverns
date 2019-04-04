@@ -5,7 +5,7 @@ import pygame
 from .initiative import InitiativeTracker, CharacterInitiative
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS
-from .gui.utils import draw_text
+from .gui.utils import draw_text, Button
 
 
 class InitiativeTrackerScreen(Screen):
@@ -18,10 +18,8 @@ class InitiativeTrackerScreen(Screen):
         self._namebox = TextBox((0, 0), (200, 30), "Bilbo")
         self._initiativebox = TextBox((0, 0), (60, 30), "1", allowed=NUMERIC_KEYS, center=True)
         self._healthbox = TextBox((0, 0), (60, 30), "2", allowed=NUMERIC_KEYS, center=True)
-        self._add_button = pygame.Rect(0, 0, 0, 0)
+        self._add_button = Button("Add", (0, 0), (0, 0), self._add_character)
         self._entries = {}
-
-        self._font = pygame.font.SysFont('comicsansms', 18)
 
     def _update(self):
         for char in self.tracker.character_order():
@@ -32,24 +30,24 @@ class InitiativeTrackerScreen(Screen):
             if char not in self._entries:
                 del self._entries[char]
 
+        self._add_button.enabled = self._valid_input()
+
     def _draw(self, screen):
         self._draw_initiative_order(screen, (10, 10))
         self._draw_input(screen, (10, screen.get_height() - self._namebox.rect.height - 10))
 
     def _handle_events(self, events):
         super()._handle_events(events)
-        self._namebox.handle_events(events)
-        self._initiativebox.handle_events(events)
-        self._healthbox.handle_events(events)
 
         for char in self.tracker.character_order():
             self._entries[char].handle_events(events)
 
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self._add_button.collidepoint(pygame.mouse.get_pos()):
-                    self._add_character()
+        self._namebox.handle_events(events)
+        self._initiativebox.handle_events(events)
+        self._healthbox.handle_events(events)
+        self._add_button.handle_events(events)
 
+        for event in events:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     self._add_character()
@@ -76,11 +74,8 @@ class InitiativeTrackerScreen(Screen):
                                     (self._initiativebox.rect.right, pos[1]))
         self._healthbox.rect.left = self._initiativebox.rect.right + health_width
 
-        self._add_button = pygame.Rect(self._healthbox.rect.right + 10, pos[1], 100, 30)
-        pygame.draw.rect(screen, (255, 255, 255), self._add_button)
-
-        add_color = (0, 0, 0) if self._valid_input() else (200, 200, 200)
-        draw_text(screen, self._font, "Add", self._add_button.center, add_color, center=True)
+        self._add_button.rect = pygame.Rect(self._healthbox.rect.right + 10, pos[1], 100, 30)
+        self._add_button.draw(screen)
 
     def _draw_initiative_order(self, screen, pos):
         x_pos, y_pos = pos
@@ -115,7 +110,8 @@ class _InitiativeEntry:
         self.pos = (0, 0)
         self.tracker = tracker
         self.character = character
-        self.remove_button = pygame.Rect(self.pos, (100, 30))
+        self.remove_button = Button("remove", self.pos, (100, 30),
+                                    self.tracker.remove_character, [self.character])
 
         self._namebox = _NameAttrBox(character, self.pos, (200, 30))
         self._initiativebox = _InitiativeAttrBox(character, self.pos, (60, 30), center=True)
@@ -128,12 +124,7 @@ class _InitiativeEntry:
         self._namebox.handle_events(events)
         self._initiativebox.handle_events(events)
         self._healthbox.handle_events(events)
-
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self.remove_button.collidepoint(pygame.mouse.get_pos()):
-                    if self.character in self.tracker.character_order():
-                        self.tracker.remove_character(self.character)
+        self.remove_button.handle_events(events)
 
     def draw(self, screen):
         """Draw this element to screen."""
@@ -156,10 +147,9 @@ class _InitiativeEntry:
                                     (self._initiativebox.rect.right, self.pos[1]))
         self._healthbox.rect.left = self._initiativebox.rect.right + health_width
 
-        self.remove_button.top = self.pos[1]
-        self.remove_button.left = self._healthbox.rect.right + 10
-        pygame.draw.rect(screen, (255, 255, 255), self.remove_button)
-        draw_text(screen, self._font, "remove", self.remove_button.center, center=True)
+        self.remove_button.rect.top = self.pos[1]
+        self.remove_button.rect.left = self._healthbox.rect.right + 10
+        self.remove_button.draw(screen)
 
 
 class _AttributeBox(TextBox):
