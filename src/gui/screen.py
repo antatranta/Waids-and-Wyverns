@@ -1,6 +1,7 @@
 """Base class for creating a GUI screen."""
 
 import sys
+import os
 from abc import ABC, abstractmethod
 
 import pygame
@@ -22,6 +23,8 @@ class Screen(ABC):
         self.running = True
         screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Waids & Wyverns")
+        game_icon = pygame.image.load(os.path.join(".", "assets", "wyvern_icon_red.png"))
+        pygame.display.set_icon(game_icon)
         frame_clock = pygame.time.Clock()
 
         while self.running:
