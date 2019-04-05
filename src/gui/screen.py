@@ -17,6 +17,7 @@ class Screen(ABC):
 
     def __init__(self):
         self.running = False
+        self._font = pygame.font.SysFont('comicsansms', 18)
 
     def open(self):
         """Open this screen."""

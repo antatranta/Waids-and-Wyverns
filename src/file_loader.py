@@ -1,36 +1,56 @@
 """ All utilities and class for map preloading into a list """
 import os
+from tkinter import Tk, filedialog
 
 
-class MapFileLoader:
+class FileLoader:
+    """Base class to help with file loading."""
+
+    def __init__(self, root, filetypes=None):
+        """
+        Initialize a FileLoader object.
+
+        :param root:      Directory to load files from.
+        :param filetypes: List of filetype suffixes (eg. '.txt') that this
+                          FileLoader allows. If None all files are allowed.
+        """
+        self.root = root
+        self.filetypes = filetypes if filetypes is not None else ['']
+
+    def file_dialog(self):
+        """Open a file dialog to select file."""
+        Tk().withdraw()
+        filetypes = [("Files", [f"*{suffix}" for suffix in self.filetypes]), ("All Files", "*")]
+        return filedialog.askopenfilename(initialdir=self.root, filetypes=filetypes)
+
+    def get_files(self):
+        """Returns a list of all files of this loader."""
+        files = []
+        for file in os.listdir(self.root):
+            if any([file.endswith(suffix) for suffix in self.filetypes]):
+                files.append(os.path.join(self.root, file))
+        return files
+
+
+class MapFileLoader(FileLoader):
     """ Class to load the map files (png, jpg, etc) """
 
     def __init__(self, map_path=None):
-        self.map_path = map_path or os.path.join(".", "assets", "images", "maps")
-        self.load_map_files()
+        map_path = map_path or os.path.join(".", "assets", "images", "maps")
+        super().__init__(map_path, [".jpg", ".png"])
 
     def load_map_files(self):
         """ Loads the map files into map_files list """
-        maps = []
-        for map_file in os.listdir(self.map_path):
-            if map_file.endswith(".png") or map_file.endswith(".jpg"):
-                maps.append(os.path.join(self.map_path, map_file))
-
-        return maps
+        return self.get_files()
 
 
-class CharacterFileLoader:
+class CharacterFileLoader(FileLoader):
     """ Class to load the character files (png, jpg, etc) """
 
     def __init__(self, character_path=None):
-        self.character_path = character_path or os.path.join(".", "assets", "images", "characters")
-        self.load_character_files()
+        character_path = character_path or os.path.join(".", "assets", "images", "characters")
+        super().__init__(character_path, [".jpg", ".png"])
 
     def load_character_files(self):
         """ Loads the character files into characters list """
-        characters = []
-        for character_file in os.listdir(self.character_path):
-            if character_file.endswith(".png") or character_file.endswith(".jpg"):
-                characters.append(os.path.join(self.character_path, character_file))
-
-        return characters
+        return self.get_files()
