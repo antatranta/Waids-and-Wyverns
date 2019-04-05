@@ -10,7 +10,6 @@ def roll_results(times, dice_type, choice, mod_num):
     if choice:
         total += _modifier(total, mod_num)
     while count < times:
-        roll_dice(dice_type)
         total += roll_dice(dice_type)
         count += 1
     return total
@@ -60,8 +59,10 @@ def roll_dice(dice_type):
 
 
 # TEMP TEST
-print("Min: " + str(advantage_disadvantage(False, 'd4')))
-print("Max: " + str(advantage_disadvantage(True, 'd4')))
-print("Roll Result: " + str(roll_results(1, 'd4', True, 2)))
+# random.seed(10)
+# print("Min: " + str(advantage_disadvantage(False, 'd4')))
+# print("Max: " + str(advantage_disadvantage(True, 'd4')))
+# print("Roll Result: " + str(roll_results(1, 'd4', True, 6)))
+# print("Roll Result: " + str(roll_results(1, 'd4', False, 2)))
 # if __name__ == "__main__":
 # DiceRoll.check_dice_type()
