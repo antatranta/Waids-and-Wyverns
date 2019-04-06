@@ -16,11 +16,11 @@ class TestDiceFunctions(unittest.TestCase):
 
     def test_roll_results(self):
         random.seed(10)
-        self.assertEqual(roll_results(1, 'd4', True, 2), 3)
-        self.assertEqual(roll_results(1, 'd6', True, 7), 11)
-        self.assertEqual(roll_results(1, 'd6', False, 7), 4)
+        self.assertEqual(roll_results(1, 'd4', True, 2), [[3], 2, 5])
+        self.assertEqual(roll_results(1, 'd6', True, 7), [[3], 7, 10])
+        self.assertEqual(roll_results(1, 'd6', False, 7), [[4], 7, 4])
 
     def test_advantage_disadvantage(self):
         random.seed(10)
-        self.assertEqual(advantage_disadvantage(True, 'd6'), 5)
-        self.assertEqual(advantage_disadvantage(False, 'd4'), 4)
+        self.assertEqual(advantage_disadvantage(True, 'd6'), 4)
+        self.assertEqual(advantage_disadvantage(False, 'd4'), 1)
