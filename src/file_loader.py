@@ -57,11 +57,11 @@ class CharacterFileLoader(FileLoader):
 
 
 class MusicFileLoader(FileLoader):
-    """ Class to load music files (mp3) """
+    """ Class to load music files (mp3 and ogg) """
 
     def __init__(self, music_path=None):
         music_path = music_path or os.path.join(".", "assets", "media", "music")
-        super().__init__(music_path, [".mp3"])
+        super().__init__(music_path, [".mp3", ".ogg"])
 
     def load_music_files(self):
         """ Loads the music files into a list """
@@ -73,7 +73,7 @@ class SoundFileLoader(FileLoader):
 
     def __init__(self, sound_path=None):
         sound_path = sound_path or os.path.join(".", "assets", "media", "sound")
-        super().__init__(sound_path, [".mp3"])
+        super().__init__(sound_path, [".wav", ".ogg"])
 
     def load_sound_files(self):
         """ Loads the sound files into a list """

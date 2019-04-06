@@ -16,6 +16,10 @@ class SoundPlayerScreen(Screen):
 
     def __init__(self):
         super().__init__()
+        self._music = None
+        self._sound = None
+        self._sound_channel = pygame.mixer.Channel(0)
+
         box_height = (super().screen_height * 0.05)
         box_width = (super().screen_width * 0.70)
         function_width_size = (super().screen_width - box_width) / 3
@@ -39,10 +43,18 @@ class SoundPlayerScreen(Screen):
                    button_size, self._stop_sound)]
 
     def _load_music(self):
-        pass
+        path = self.music_loader.file_dialog()
+        if path != "":
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.stop()
+            self._music = pygame.mixer.music.load(path)
 
     def _load_sound(self):
-        pass
+        path = self.sound_loader.file_dialog()
+        if path != "":
+            if pygame.mixer.get_busy():
+                pygame.mixer.stop()
+            self._sound = pygame.mixer.Sound(path)
 
     def _draw(self, screen):
         self._draw_music(screen, "placeholder.mp3")
@@ -61,23 +73,26 @@ class SoundPlayerScreen(Screen):
         pygame.draw.rect(screen, (255, 255, 255), self._sound_box, 2)
         draw_text(screen, self._font, sound_name, self._sound_box.center, center=True)
 
-    def _play_music(self):
-        print("Playing music!")
+    @staticmethod
+    def _play_music():
+        pygame.mixer.music.play()
+
+    @staticmethod
+    def _stop_music():
+        pygame.mixer.music.stop()
+
+    @staticmethod
+    def _pause_music():
+        pygame.mixer.music.pause()
 
     def _play_sound(self):
-        print("Playing sound!")
-
-    def _pause_music(self):
-        print("Paused music!")
+        self._sound_channel.play(self._sound)
 
     def _pause_sound(self):
-        print("Paused sound!")
-
-    def _stop_music(self):
-        print("Stopped music!")
+        self._sound_channel.pause()
 
     def _stop_sound(self):
-        print("Stopped sound!")
+        self._sound_channel.stop()
 
     def _handle_events(self, events):
         """ Handle events in sound player """
