@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin, load_image, draw_text, Button
+from .gui.utils import DraggableMixin, load_image, draw_text
 
 
 class MapAndCharacterScreen(Screen):
