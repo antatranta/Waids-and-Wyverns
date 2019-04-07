@@ -23,19 +23,6 @@ class MapAndCharacterScreen(Screen):
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
 
-    @classmethod
-    def _init_buttons(cls, options):
-        buttons = []
-        button_size = (cls.screen_width / len(options), 30)
-
-        x_pos = 0
-        for text, action in options:
-            pos = (x_pos, cls.screen_height - button_size[1])
-            buttons.append(Button(text, pos, button_size, action))
-            x_pos += button_size[0]
-
-        return buttons
-
     def _toggle_remove_mode(self):
         self._remove_mode = not self._remove_mode
 

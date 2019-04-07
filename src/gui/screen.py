@@ -5,6 +5,7 @@ import os
 from abc import ABC, abstractmethod
 
 import pygame
+from .utils import Button
 
 
 class Screen(ABC):
@@ -57,6 +58,18 @@ class Screen(ABC):
     def _update(self):
         # pylint: disable=no-self-use
         pass
+
+    def _init_buttons(self, options):
+        buttons = []
+        button_size = (self.screen_width / len(options), 30)
+
+        x_pos = 0
+        for text, action in options:
+            pos = (x_pos, self.screen_height - button_size[1])
+            buttons.append(Button(text, pos, button_size, action))
+            x_pos += button_size[0]
+
+        return buttons
 
 
 class ComponentScreen(Screen):

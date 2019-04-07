@@ -49,19 +49,6 @@ class SoundPlayerScreen(Screen):
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
                                                  ("Load Sound", self._load_sound)])
 
-    @classmethod
-    def _init_buttons(cls, options):
-        buttons = []
-        button_size = (cls.screen_width / len(options), 30)
-
-        x_pos = 0
-        for text, action in options:
-            pos = (x_pos, cls.screen_height - button_size[1])
-            buttons.append(Button(text, pos, button_size, action))
-            x_pos += button_size[0]
-
-        return buttons
-
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
         path = self.music_loader.file_dialog()
