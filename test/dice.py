@@ -1,5 +1,6 @@
 import unittest
 import random
+from unittest.mock import patch
 from src.dice import roll_results, advantage_disadvantage, roll_dice
 
 
@@ -21,6 +22,8 @@ class TestDiceFunctions(unittest.TestCase):
         self.assertEqual(roll_results(1, 'd6', False, 7), [[4], 7, 4])
 
     def test_advantage_disadvantage(self):
-        random.seed(10)
-        self.assertEqual(advantage_disadvantage(True, 'd6'), 5)
-        self.assertEqual(advantage_disadvantage(False, 'd4'), 4)
+        with patch('random.randint', side_effect=[3, 5]):
+            self.assertEqual(advantage_disadvantage(True, 'd6'), 5)
+
+        with patch('random.randint', side_effect=[6, 4]):
+            self.assertEqual(advantage_disadvantage(False, 'd4'), 4)
