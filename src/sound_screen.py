@@ -120,11 +120,11 @@ class SoundPlayerScreen(Screen):
         self._sound_channel.stop()
 
     def _update(self):
-        music_loaded = True if self._music_name else False
+        music_loaded = bool(self._music_name)
         for button in self._music_function_buttons:
             button.enabled = music_loaded
 
-        sound_loaded = True if self._sound_name else False
+        sound_loaded = bool(self._sound_name)
         for button in self._sound_function_buttons:
             button.enabled = sound_loaded
 
