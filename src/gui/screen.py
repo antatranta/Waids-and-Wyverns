@@ -1,9 +1,11 @@
 """Base class for creating a GUI screen."""
 
 import sys
+import os
 from abc import ABC, abstractmethod
 
 import pygame
+from .utils import Button
 
 
 class Screen(ABC):
@@ -16,12 +18,15 @@ class Screen(ABC):
 
     def __init__(self):
         self.running = False
+        self._font = pygame.font.SysFont('comicsansms', 18)
 
     def open(self):
         """Open this screen."""
         self.running = True
         screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Waids & Wyverns")
+        game_icon = pygame.image.load(os.path.join(".", "assets", "wyvern_icon_red.png"))
+        pygame.display.set_icon(game_icon)
         frame_clock = pygame.time.Clock()
 
         while self.running:
@@ -53,6 +58,18 @@ class Screen(ABC):
     def _update(self):
         # pylint: disable=no-self-use
         pass
+
+    def _init_buttons(self, options):
+        buttons = []
+        button_size = (self.screen_width / len(options), 30)
+
+        x_pos = 0
+        for text, action in options:
+            pos = (x_pos, self.screen_height - button_size[1])
+            buttons.append(Button(text, pos, button_size, action))
+            x_pos += button_size[0]
+
+        return buttons
 
 
 class ComponentScreen(Screen):

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pygame
 
-from src.gui.utils import DraggableMixin
+from src.gui.utils import DraggableMixin, Button
 
 class RectDraggable(DraggableMixin):
     def __init__(self, rect):
@@ -43,3 +43,29 @@ class TestDraggableMixin(unittest.TestCase):
                             MagicMock(type=pygame.MOUSEMOTION, pos=(0, 0), buttons=(1, 0, 0))])
 
         self.assertEqual(rect.pos, (160, 160))
+
+class TestButton(unittest.TestCase):
+
+    def test_click(self):
+        action = MagicMock()
+        params = ["param1", "param2"]
+        button = Button("my button", (0, 0), (100, 100), action, params, enabled=True)
+
+        button.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(150, 150), button=1),
+                              MagicMock(type=pygame.MOUSEBUTTONUP, pos=(150, 150), button=1)])
+
+        action.assert_not_called()
+        action.reset_mock()
+
+        button.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(50, 50), button=1),
+                              MagicMock(type=pygame.MOUSEBUTTONUP, pos=(50, 50), button=1)])
+
+        action.called_once_with(params)
+        action.reset_mock()
+
+        button.enabled = False
+        button.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(50, 50), button=1),
+                              MagicMock(type=pygame.MOUSEBUTTONUP, pos=(50, 50), button=1)])
+
+        action.assert_not_called()
+        action.reset_mock()
