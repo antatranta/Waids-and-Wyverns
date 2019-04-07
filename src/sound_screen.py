@@ -1,5 +1,5 @@
 """ All utilities and classes for Sound Player Graphical Display """
-#pylint: disable=no-self-use
+#pylint: disable=too-many-instance-attributes
 
 import os.path
 import pygame
@@ -47,7 +47,7 @@ class SoundPlayerScreen(Screen):
             Button("X", (self._sound_box.right + 2*function_width_size, box_height),
                    button_size, self._stop_sound)]
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
-                                                ("Load Sound", self._load_sound)])
+                                                 ("Load Sound", self._load_sound)])
 
     @classmethod
     def _init_buttons(cls, options):
