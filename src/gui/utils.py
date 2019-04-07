@@ -3,6 +3,7 @@
 
 import pygame
 
+
 class Button:
     """Class to assist in creation of buttons."""
 
@@ -108,7 +109,8 @@ def draw_text(screen, font, text, pos, color=(0, 0, 0), *,
 
         y += int(height)
 
-    return (max_width, total_height)
+    return max_width, total_height
+
 
 def load_image(path, scale=None):
     """

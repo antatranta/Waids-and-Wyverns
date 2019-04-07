@@ -5,6 +5,7 @@ from .gui.utils import Button
 from .initiative_screen import InitiativeTrackerScreen
 from .map_screen import MapAndCharacterScreen
 from .dice_roller_screen import DiceRollerScreen
+from .sound_screen import SoundPlayerScreen
 
 
 class MainMenuScreen(Screen):
@@ -19,7 +20,8 @@ class MainMenuScreen(Screen):
         self._buttons = [
             Button("Maps", (x_pos, 10), button_size, MapAndCharacterScreen().open),
             Button("Initiative", (x_pos, 50), button_size, InitiativeTrackerScreen().open),
-            Button("Dice Roller", (x_pos, 90), button_size, DiceRollerScreen().open)]
+            Button("Dice Roller", (x_pos, 90), button_size, DiceRollerScreen().open),
+            Button("Sound Player", (x_pos, 130), button_size, SoundPlayerScreen().open)]
 
     def _draw(self, screen):
         for button in self._buttons:

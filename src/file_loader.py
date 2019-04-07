@@ -40,7 +40,7 @@ class MapFileLoader(FileLoader):
         super().__init__(map_path, [".jpg", ".png"])
 
     def load_map_files(self):
-        """ Loads the map files into map_files list """
+        """ Loads the map files into a list """
         return self.get_files()
 
 
@@ -53,4 +53,28 @@ class CharacterFileLoader(FileLoader):
 
     def load_character_files(self):
         """ Loads the character files into characters list """
+        return self.get_files()
+
+
+class MusicFileLoader(FileLoader):
+    """ Class to load music files (mp3 and ogg) """
+
+    def __init__(self, music_path=None):
+        music_path = music_path or os.path.join(".", "assets", "media", "music")
+        super().__init__(music_path, [".mp3", ".ogg"])
+
+    def load_music_files(self):
+        """ Loads the music files into a list """
+        return self.get_files()
+
+
+class SoundFileLoader(FileLoader):
+    """ Class to load sound files (wav and ogg) """
+
+    def __init__(self, sound_path=None):
+        sound_path = sound_path or os.path.join(".", "assets", "media", "sound")
+        super().__init__(sound_path, [".wav", ".ogg"])
+
+    def load_sound_files(self):
+        """ Loads the sound files into a list """
         return self.get_files()
