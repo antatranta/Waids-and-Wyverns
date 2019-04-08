@@ -5,7 +5,7 @@ import pygame
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS
 from .gui.utils import draw_text
-
+from .dice import roll_results, advantage_disadvantage
 
 class DiceRollerScreen(Screen):
     """Class to start graphical dice roller"""
@@ -15,6 +15,7 @@ class DiceRollerScreen(Screen):
 
         self._dicesides = [4, 6, 8, 10, 12, 20, 100]
         self._dicemodifier = [4, 6, 8, 10, 12, 20, 100]
+        self._dicenumber = []
 
         for i in range(len(self._dicesides)):
             self._dicesides[i] = TextBox((0, 0), (50, 30), "0",\
@@ -31,6 +32,10 @@ class DiceRollerScreen(Screen):
         """draw function to draw necessary objects on screen"""
         self._draw_input(screen)
 
+    def update(self):
+        """ stuff """
+        return True
+
     def _handle_events(self, events):
         super()._handle_events(events)
 
@@ -44,10 +49,14 @@ class DiceRollerScreen(Screen):
             if event.type == pygame.MOUSEBUTTONUP:
                 if self._roll_button.collidepoint(pygame.mouse.get_pos()):
                     print("roll")
+                    # for i in range(len(self._dicesides)):
+                    #     print(self._dicesides[i].value)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     print("roll")
+                    print(roll_results(3, "d4", False, 0))
+
                 if event.key == pygame.K_ESCAPE:
                     self.close()
 
@@ -116,7 +125,6 @@ class DiceRollerEntry:
             self._dicemodifier[i] = TextBox((0, 0), (50, 30), "0",\
                  allowed=NUMERIC_KEYS, center=True)
 
-        self._roll_button = pygame.Rect(0, 0, 0, 0)
         self._font = pygame.font.SysFont('comicsansms', 18)
 
     def handle_events(self, events):
@@ -172,9 +180,3 @@ class DiceRollerEntry:
             if i > 0:
                 self._dicesides[i].rect.bottom = rect_bottom
                 rect_bottom += 50
-
-        self._roll_button = pygame.Rect(250, 400, 100, 50)
-        pygame.draw.rect(screen, (255, 255, 255), self._roll_button)
-
-        add_color = (0, 0, 0) if self._valid_input() else (200, 200, 200)
-        draw_text(screen, self._font, "Roll", self._roll_button.center, add_color, center=True)
