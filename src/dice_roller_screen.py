@@ -4,7 +4,8 @@ import pygame
 
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS
-from .gui.utils import draw_text
+from .gui.utils import draw_text, Button
+from .dice import roll_results, advantage_disadvantage
 
 
 class DiceRollerScreen(Screen):
@@ -15,18 +16,31 @@ class DiceRollerScreen(Screen):
 
         y_pos = 0
 
-        self._dice = []
-        self._dicesides = [4, 6, 8, 10, 12, 20, 100]
+        self._die_result = None
+        self._dice = [] # blank list 
+        self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest 
         for sides in self._dicesides:
-            self._dice.append(_Dice((0, y_pos), sides))
-            y_pos += 50
+            self._dice.append(_Dice((0, y_pos), sides)) # increment so that you can append to blank list
+            y_pos += 50 # increase the y position so it's spaced out between the boxes when printed 
 
-        self._roll_button = pygame.Rect(0, 0, 0, 0)
+        self._roll_button = Button("Roll", (275, 400), (100, 50), self._die_roll)
         self._font = pygame.font.SysFont('comicsansms', 18)
 
     def _draw(self, screen):
         for die in self._dice:
             die.draw(screen)
+        
+        self._roll_button.draw(screen)
+
+    def _die_roll(self):
+        self._die_result = []
+        for die in self._dice:
+            times = int(die.input.value if die.input.value != "" else 0)
+            modifier = int(die.modifier.value or 0)
+            self._die_result.append(roll_results(times, f"d{die.sides}",
+                                    die.modifier.value != "", modifier))
+        
+        print(self._die_result)
 
     def _valid_input(self):
         for i in range(len(self._dicesides)):
@@ -38,55 +52,18 @@ class DiceRollerScreen(Screen):
 
         return True
 
-    def _draw_input(self, screen):
-        for i in range(len(self._dicesides)):
-            self._dicesides[i].draw(screen)
-
-        dice_width = [4, 6, 8, 10, 12, 20, 100]
-        x_pos = 10
-        y_pos = 0
-        rect_bottom = 75
-
-        for i in range(len(self._dicesides)):
-            if i == 0:
-                dice_string = "# of D4 dice: "
-            elif i == 1:
-                dice_string = "# of D6 dice: "
-            elif i == 2:
-                dice_string = "# of D8 dice: "
-            elif i == 3:
-                dice_string = "# of D10 dice: "
-            elif i == 4:
-                dice_string = "# of D12 dice: "
-            elif i == 5:
-                dice_string = "# of D20 dice: "
-            elif i == 6:
-                dice_string = "# of D100 dice: "
-
-            dice_width[i], _ = draw_text(
-                screen, self._font, dice_string, (x_pos, y_pos))
-            self._dicesides[i].rect.left = dice_width[i] + x_pos
-            y_pos += 50
-            if i > 0:
-                self._dicesides[i].rect.bottom = rect_bottom
-                rect_bottom += 50
-
-        self._roll_button = pygame.Rect(250, 400, 100, 50)
-        pygame.draw.rect(screen, (255, 255, 255), self._roll_button)
-
-        add_color = (0, 0, 0) if self._valid_input() else (200, 200, 200)
-        draw_text(screen, self._font, "Roll",
-                  self._roll_button.center, add_color, center=True)
-
     def _handle_events(self, events):
         super()._handle_events(events)
 
         for die in self._dice:
             die.handle_events(events)
+        
+        self._roll_button.handle_events(events)
 
         for event in events:
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_ESCAPE:
+            if event.type == pygame.KEYUP: # if key is released 
+                self._roll_button.handle_events(events)
+                if event.key == pygame.K_ESCAPE: # to check if it was the escape key 
                     self.close()
 
 
