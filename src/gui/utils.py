@@ -76,6 +76,9 @@ class DraggableMixin:
                 else:
                     self._draggable_selected = False
 
+def Load_Font():
+    myfont = pygame.font.SysFont('comicsansms', 18)
+    return myfont
 
 def draw_text(screen, font, text, pos, color=(0, 0, 0), *,
               background=None, center=False, split_char='\n'):

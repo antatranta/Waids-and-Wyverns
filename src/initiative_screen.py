@@ -6,6 +6,7 @@ from .initiative import InitiativeTracker, CharacterInitiative
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS
 from .gui.utils import draw_text, Button
+from .gui.utils import Load_Font
 
 
 class InitiativeTrackerScreen(Screen):
@@ -117,7 +118,8 @@ class _InitiativeEntry:
         self._initiativebox = _InitiativeAttrBox(character, self.pos, (60, 30), center=True)
         self._healthbox = _HealthAttrBox(character, self.pos, (60, 30), center=True)
 
-        self._font = pygame.font.SysFont('comicsansms', 18)
+        #self._font = pygame.font.SysFont('comicsansms', 18)
+        self._font = Load_Font();
 
     def handle_events(self, events):
         """Handle pygame events for this object."""
