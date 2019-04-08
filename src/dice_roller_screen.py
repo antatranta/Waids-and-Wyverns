@@ -28,6 +28,8 @@ class DiceRollerScreen(Screen):
         for die in self._dice:
             die.draw(screen)
 
+        self._print_results(screen, results=[[1, 2], 3, 4])
+
     def _valid_input(self):
         for i in range(len(self._dicesides)):
             if not self._dicesides[i].value:
@@ -88,6 +90,11 @@ class DiceRollerScreen(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
+
+    def _print_results(self, screen, results):
+        rolls, mod_num, total = results
+        output = f"{rolls}, {mod_num}, {total}"
+        draw_text(screen, self._font, output, (500, 0))
 
 
 class _Dice:
