@@ -26,7 +26,7 @@ class TextBox:
         """
         self.rect = pygame.Rect(pos, size)
         self.value = initial_value if initial_value is not None else ""
-        self.font = font if font is not None else load_font() #pygame.font.SysFont('comicsansms', 18)
+        self.font = font if font is not None else load_font()
         self.allowed = allowed
         self.center = center
         self.selected = False

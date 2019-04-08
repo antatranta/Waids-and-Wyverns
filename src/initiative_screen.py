@@ -119,7 +119,7 @@ class _InitiativeEntry:
         self._healthbox = _HealthAttrBox(character, self.pos, (60, 30), center=True)
 
         #self._font = pygame.font.SysFont('comicsansms', 18)
-        self._font = load_font();
+        self._font = load_font()
 
     def handle_events(self, events):
         """Handle pygame events for this object."""
