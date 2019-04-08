@@ -5,7 +5,6 @@ import pygame
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS
 from .gui.utils import draw_text
-from .dice import roll_results, advantage_disadvantage
 
 
 class DiceRollerScreen(Screen):
@@ -78,6 +77,17 @@ class DiceRollerScreen(Screen):
         add_color = (0, 0, 0) if self._valid_input() else (200, 200, 200)
         draw_text(screen, self._font, "Roll",
                   self._roll_button.center, add_color, center=True)
+
+    def _handle_events(self, events):
+        super()._handle_events(events)
+
+        for die in self._dice:
+            die.handle_events(events)
+
+        for event in events:
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    self.close()
 
 
 class _Dice:
