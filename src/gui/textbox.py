@@ -4,7 +4,7 @@ import re
 import pygame
 
 from .utils import draw_text
-from .utils import Load_Font
+from .utils import load_font
 
 ALPHA_KEYS = re.compile(r"[a-z]|[A-Z]")
 NUMERIC_KEYS = re.compile(r"[0-9]")
@@ -26,7 +26,7 @@ class TextBox:
         """
         self.rect = pygame.Rect(pos, size)
         self.value = initial_value if initial_value is not None else ""
-        self.font = font if font is not None else Load_Font() #pygame.font.SysFont('comicsansms', 18)
+        self.font = font if font is not None else load_font() #pygame.font.SysFont('comicsansms', 18)
         self.allowed = allowed
         self.center = center
         self.selected = False
