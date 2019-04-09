@@ -13,7 +13,7 @@ class TextBox:
     """Class for including a GUI TextBox."""
 
     def __init__(self, pos, size, initial_value=None, font=None, *,
-                 allowed=None, center=False):
+                 label=None, allowed=None, center=False):
         """
         Create an instance of TextBox.
 
@@ -21,23 +21,41 @@ class TextBox:
         :param size: Size (width, height) in pixels of the textbox.
         :param initial_value: Initial value to set textbox too.
         :param font: Font to use for textbox.
+        :param label: Label to place left of the textbox.
         :param allowed: Regex to match characters that can be typed in the textbox.
         :param center: If True center text in textbox.
         """
         self.rect = pygame.Rect(pos, size)
         self.value = initial_value if initial_value is not None else ""
         self.font = font if font is not None else load_font()
+        self.label = label
         self.allowed = allowed
         self.center = center
         self.selected = False
 
+    def _box_rect(self):
+        box_rect = self.rect
+
+        if self.label:
+            label_width, _ = self.font.size(self.label)
+            pos = (self.rect.left + label_width, self.rect.top)
+            size = (self.rect.width - label_width, self.rect.height)
+            box_rect = pygame.Rect(pos, size)
+
+        return box_rect
+
     def draw(self, screen): # pragma: no cover
         """Draw this element to screen."""
-        border_color = (0, 0, 0) if self.selected else (220, 220, 220)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect)
-        pygame.draw.rect(screen, border_color, self.rect, 1)
+        box_rect = self._box_rect()
 
-        text_pos = self.rect.center if self.center else (self.rect.left + 1, self.rect.top)
+        if self.label:
+            draw_text(screen, self.font, self.label, self.rect.topleft)
+
+        border_color = (0, 0, 0) if self.selected else (220, 220, 220)
+        pygame.draw.rect(screen, (255, 255, 255), box_rect)
+        pygame.draw.rect(screen, border_color, box_rect, 1)
+
+        text_pos = box_rect.center if self.center else (box_rect.left + 1, box_rect.top)
         draw_text(screen, self.font, self.value, text_pos, center=self.center)
 
     def handle_events(self, events):
@@ -45,7 +63,7 @@ class TextBox:
         for event in events:
 
             if event.type == pygame.MOUSEBUTTONUP:
-                self.selected = self.rect.collidepoint(pygame.mouse.get_pos())
+                self.selected = self._box_rect().collidepoint(pygame.mouse.get_pos())
 
             if not self.selected:
                 return
