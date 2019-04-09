@@ -44,8 +44,6 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-        print(self._die_result)
-
     def _valid_input(self):
         for i in range(len(self._dicesides)):
             if not self._dicesides[i].value:
