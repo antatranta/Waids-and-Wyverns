@@ -6,7 +6,7 @@ import pygame
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS, ARITHMETIC_KEYS
 from .gui.utils import draw_text, Button
-from .dice import roll_results
+from .dice import roll_results, advantage_disadvantage
 
 
 class DiceRollerScreen(Screen):
@@ -18,22 +18,37 @@ class DiceRollerScreen(Screen):
         y_pos = 0
 
         self._die_result = None
+        self._advantage_result = None
         self._dice = [] # blank list
         self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
+
         for sides in self._dicesides:
             # increment so that you can append to blank list
             self._dice.append(_Dice((0, y_pos), sides))
             y_pos += 50 # increase the y position so it's spaced out between the boxes when printed
 
-        self._roll_button = Button("Roll", (275, 400), (100, 50), self._die_roll)
-        self._font = pygame.font.SysFont('comicsansms', 18)
+        advantage_x, _ = self._font.size("D20 with:  ")
+        self._advantage_button = Button("Advantage", (advantage_x, 350), (120, 30),
+                                        self._roll_advantage)
+        self._disadvantage_button = Button("Disadvantage", (advantage_x + 120, 350), (120, 30),
+                                           self._roll_disadvantage)
 
+        self._roll_button = Button("Roll", (275, 400), (100, 50), self._die_roll)
     def _draw(self, screen):
         for die in self._dice:
             die.draw(screen)
 
         if self._die_result is not None:
             self._draw_results(screen, self._die_result, (350, 0))
+
+        draw_text(screen, self._font, "D20 with:  ", (0, self._advantage_button.rect.top))
+        self._advantage_button.draw(screen)
+        self._disadvantage_button.draw(screen)
+
+        if self._advantage_result:
+            results_x = self._disadvantage_button.rect.right + 10
+            self._draw_advantage_result(screen, self._advantage_result,
+                                        (results_x, self._disadvantage_button.rect.top))
 
         self._roll_button.draw(screen)
 
@@ -45,15 +60,11 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-    def _valid_input(self):
-        for i in range(len(self._dicesides)):
-            if not self._dicesides[i].value:
-                return False
+    def _roll_advantage(self):
+        self._advantage_result = advantage_disadvantage(True, "d20")
 
-            if not self._dicesides[i].value.isdigit():
-                return False
-
-        return True
+    def _roll_disadvantage(self):
+        self._advantage_result = advantage_disadvantage(False, "d20")
 
     def _handle_events(self, events):
         super()._handle_events(events)
@@ -62,6 +73,8 @@ class DiceRollerScreen(Screen):
             die.handle_events(events)
 
         self._roll_button.handle_events(events)
+        self._advantage_button.handle_events(events)
+        self._disadvantage_button.handle_events(events)
 
         for event in events:
             if event.type == pygame.KEYUP: # if key is released
@@ -77,6 +90,10 @@ class DiceRollerScreen(Screen):
                 output += f"{roll_sum} + ({mod}) = {total}"
             output += "\n\n"
         draw_text(screen, self._font, output, pos)
+
+    def _draw_advantage_result(self, screen, results, pos):
+        rolls, value = results
+        draw_text(screen, self._font, f"{rolls[0]} vs {rolls[1]} => {value}", pos)
 
 
 class _Dice:
