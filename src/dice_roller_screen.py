@@ -17,11 +17,12 @@ class DiceRollerScreen(Screen):
         y_pos = 0
 
         self._die_result = None
-        self._dice = [] # blank list 
-        self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest 
+        self._dice = [] # blank list
+        self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
         for sides in self._dicesides:
-            self._dice.append(_Dice((0, y_pos), sides)) # increment so that you can append to blank list
-            y_pos += 50 # increase the y position so it's spaced out between the boxes when printed 
+            # increment so that you can append to blank list
+            self._dice.append(_Dice((0, y_pos), sides))
+            y_pos += 50 # increase the y position so it's spaced out between the boxes when printed
 
         self._roll_button = Button("Roll", (275, 400), (100, 50), self._die_roll)
         self._font = pygame.font.SysFont('comicsansms', 18)
@@ -29,7 +30,7 @@ class DiceRollerScreen(Screen):
     def _draw(self, screen):
         for die in self._dice:
             die.draw(screen)
-        
+
         self._roll_button.draw(screen)
         self._print_results(screen, results=[[1, 2], 3, 4])
 
@@ -40,7 +41,7 @@ class DiceRollerScreen(Screen):
             modifier = int(die.modifier.value or 0)
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                     die.modifier.value != "", modifier))
-        
+
         print(self._die_result)
 
     def _valid_input(self):
@@ -58,13 +59,13 @@ class DiceRollerScreen(Screen):
 
         for die in self._dice:
             die.handle_events(events)
-        
+
         self._roll_button.handle_events(events)
 
         for event in events:
-            if event.type == pygame.KEYUP: # if key is released 
+            if event.type == pygame.KEYUP: # if key is released
                 self._roll_button.handle_events(events)
-                if event.key == pygame.K_ESCAPE: # to check if it was the escape key 
+                if event.key == pygame.K_ESCAPE: # to check if it was the escape key
                     self.close()
 
     def _print_results(self, screen, results):
