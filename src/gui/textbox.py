@@ -8,6 +8,7 @@ from .utils import load_font
 
 ALPHA_KEYS = re.compile(r"[a-z]|[A-Z]")
 NUMERIC_KEYS = re.compile(r"[0-9]")
+ARITHMETIC_KEYS = re.compile(r"[0-9]|-")
 
 class TextBox:
     """Class for including a GUI TextBox."""

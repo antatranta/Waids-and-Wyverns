@@ -30,11 +30,12 @@ def advantage_disadvantage(advantage, dice_type):
     disadvantage rolls again, picks lower"""
     # Rules: https://5thsrd.org/rules/advantage_and_disadvantage/
     # Use the same dice type that is picked, i.e roll d4 twice
+    roll1, roll2 = roll_dice(dice_type), roll_dice(dice_type)
     if advantage:
-        value = max(roll_dice(dice_type), roll_dice(dice_type))
+        value = max(roll1, roll2)
     else:
-        value = min(roll_dice(dice_type), roll_dice(dice_type))
-    return value
+        value = min(roll1, roll2)
+    return ([roll1, roll2], value)
 
 
 def roll_dice(dice_type):
@@ -56,16 +57,3 @@ def roll_dice(dice_type):
     elif dice_type == "d100":
         value = random.randint(1, 100)
     return value
-
-
-# TEMP TEST
-# random.seed(10)
-# print("Min: " + str(advantage_disadvantage(False, 'd4')))
-# print("Max: " + str(advantage_disadvantage(True, 'd4')))
-# print("Roll Result: " + str(roll_results(1, 'd4', True, 6)))
-# print("Roll Result: " + str(roll_results(1, 'd4', False, 2)))
-# if __name__ == "__main__":
-# DiceRoll.check_dice_type()
-# roll_results(4, 'd4', True, -1)
-# gets item from list
-# print(roll_results(4, 'd4', False, 10).__getitem__(0))

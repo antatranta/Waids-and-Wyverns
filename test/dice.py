@@ -23,7 +23,7 @@ class TestDiceFunctions(unittest.TestCase):
 
     def test_advantage_disadvantage(self):
         with patch('random.randint', side_effect=[3, 5]):
-            self.assertEqual(advantage_disadvantage(True, 'd6'), 5)
+            self.assertEqual(advantage_disadvantage(True, 'd6'), ([3, 5], 5))
 
         with patch('random.randint', side_effect=[6, 4]):
-            self.assertEqual(advantage_disadvantage(False, 'd4'), 4)
+            self.assertEqual(advantage_disadvantage(False, 'd4'), ([6, 4], 4))
