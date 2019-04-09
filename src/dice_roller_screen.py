@@ -1,4 +1,5 @@
 """All Utilities and Classes for Dice Roller Graphical Display"""
+import re
 
 import pygame
 
@@ -40,7 +41,7 @@ class DiceRollerScreen(Screen):
         self._die_result = []
         for die in self._dice:
             times = int(die.input.value if die.input.value != "" else 0)
-            modifier = int(die.modifier.value or 0)
+            modifier = int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
@@ -71,7 +72,10 @@ class DiceRollerScreen(Screen):
     def _draw_results(self, screen, results, pos):
         output = ""
         for rolls, mod, total in results:
-            output += f"{rolls}, {mod}, {total}\n\n"
+            if rolls:
+                roll_sum = " + ".join([str(roll) for roll in rolls])
+                output += f"{roll_sum} + ({mod}) = {total}"
+            output += "\n\n"
         draw_text(screen, self._font, output, pos)
 
 
