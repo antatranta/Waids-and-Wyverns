@@ -3,7 +3,7 @@
 import pygame
 
 from .gui.screen import Screen
-from .gui.textbox import TextBox, NUMERIC_KEYS
+from .gui.textbox import TextBox, NUMERIC_KEYS, ARITHMETIC_KEYS
 from .gui.utils import draw_text, Button
 from .dice import roll_results, advantage_disadvantage
 
@@ -31,6 +31,7 @@ class DiceRollerScreen(Screen):
             die.draw(screen)
         
         self._roll_button.draw(screen)
+        self._print_results(screen, results=[[1, 2], 3, 4])
 
     def _die_roll(self):
         self._die_result = []
@@ -66,6 +67,11 @@ class DiceRollerScreen(Screen):
                 if event.key == pygame.K_ESCAPE: # to check if it was the escape key 
                     self.close()
 
+    def _print_results(self, screen, results):
+        rolls, mod_num, total = results
+        output = f"{rolls}, {mod_num}, {total}"
+        draw_text(screen, self._font, output, (500, 0))
+
 
 class _Dice:
 
@@ -82,7 +88,7 @@ class _Dice:
         self.input = TextBox((pos[0] + text_width, pos[1]), (50, 30),
                              allowed=NUMERIC_KEYS, center=True)
         self.modifier = TextBox((self.input.rect.right + self._mod_width,
-                                 pos[1]), (50, 30), allowed=NUMERIC_KEYS, center=True)
+                                 pos[1]), (50, 30), allowed=ARITHMETIC_KEYS, center=True)
 
     def draw(self, screen):
         """Draw this component to screen."""
