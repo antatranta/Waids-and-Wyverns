@@ -5,7 +5,7 @@ import pygame
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS, ARITHMETIC_KEYS
 from .gui.utils import draw_text, Button
-from .dice import roll_results, advantage_disadvantage
+from .dice import roll_results
 
 
 class DiceRollerScreen(Screen):
@@ -31,8 +31,10 @@ class DiceRollerScreen(Screen):
         for die in self._dice:
             die.draw(screen)
 
+        if self._die_result is not None:
+            self._draw_results(screen, self._die_result, (350, 0))
+
         self._roll_button.draw(screen)
-        self._print_results(screen, results=[[1, 2], 3, 4])
 
     def _die_roll(self):
         self._die_result = []
@@ -40,7 +42,7 @@ class DiceRollerScreen(Screen):
             times = int(die.input.value if die.input.value != "" else 0)
             modifier = int(die.modifier.value or 0)
             self._die_result.append(roll_results(times, f"d{die.sides}",
-                                    die.modifier.value != "", modifier))
+                                                 die.modifier.value != "", modifier))
 
         print(self._die_result)
 
@@ -68,10 +70,11 @@ class DiceRollerScreen(Screen):
                 if event.key == pygame.K_ESCAPE: # to check if it was the escape key
                     self.close()
 
-    def _print_results(self, screen, results):
-        rolls, mod_num, total = results
-        output = f"{rolls}, {mod_num}, {total}"
-        draw_text(screen, self._font, output, (500, 0))
+    def _draw_results(self, screen, results, pos):
+        output = ""
+        for rolls, mod, total in results:
+            output += f"{rolls}, {mod}, {total}\n\n"
+        draw_text(screen, self._font, output, pos)
 
 
 class _Dice:
