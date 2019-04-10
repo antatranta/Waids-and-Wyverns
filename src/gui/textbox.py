@@ -8,8 +8,8 @@ from .utils import draw_text, load_font
 ALPHA_KEYS = re.compile(r"[a-z]|[A-Z]")
 NUMERIC_KEYS = re.compile(r"[0-9]")
 ARITHMETIC_KEYS = re.compile(r"[0-9]|-")
-PRINTABLE_KEYS = re.compile((r"[0-9]|[a-z]|[A-Z]|\!|\"|#|\$|%|&|'|\(|\)|\|\*|\+|,|-|\.|\/|:|;|<|=|>|\?"
-                             r"|@|\[|\]|\\|\^|\_|\`|\{|\}|\~| "))
+PRINTABLE_KEYS = re.compile((r"[0-9]|[a-z]|[A-Z]|\!|\"|#|\$|%|&|'|\(|\)|\|\*|\+|,|-|\."
+                             r"|\/|:|;|<|=|>|\?|@|\[|\]|\\|\^|\_|\`|\{|\}|\~| "))
 
 class TextBox:
     """Class for including a GUI TextBox."""
