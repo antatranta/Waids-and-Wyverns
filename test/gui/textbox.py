@@ -2,11 +2,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
-from src.gui.textbox import TextBox, ALPHA_KEYS, NUMERIC_KEYS
+from src.gui.textbox import TextBox, TextArea, ALPHA_KEYS, NUMERIC_KEYS
 
 class TestTextBox(unittest.TestCase):
-
-    pygame.font.init()
 
     def test___init__(self):
         tb = TextBox((0, 0), (200, 200), initial_value="foobar", allowed=ALPHA_KEYS, center=True)
@@ -73,3 +71,41 @@ class TestTextBox(unittest.TestCase):
 
         self.assertEqual(tb_num.value, "109", "NUMERIC_KEYS")
         self.assertEqual(tb_alpha.value, "aZ", "ALPHA_KEYS")
+
+class TestTextArea(unittest.TestCase):
+
+    def test_cursor(self):
+        ta = TextArea((0, 0), (100, 100), initial_value="hello world", always_selected=True)
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_BACKSPACE, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_w, unicode='W')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_LEFT, unicode='')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_BACKSPACE, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_h, unicode='H')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RIGHT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RIGHT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RIGHT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RIGHT, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RIGHT, unicode='')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_BACKSPACE, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_COMMA, unicode=',')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_RETURN, unicode='')])
+
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_DOWN, unicode='')])
+        ta.handle_events([MagicMock(type=pygame.KEYDOWN, key=pygame.K_1, unicode='!')])
+
+        self.assertEqual(ta.value, "Hello,\nWorld!")
