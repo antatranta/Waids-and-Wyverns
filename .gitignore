@@ -108,6 +108,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Notes text file
+assets\media\notes\notes.txt
+
 # Spyder project settings
 .spyderproject
 .spyproject
