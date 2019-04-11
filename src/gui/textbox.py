@@ -155,7 +155,10 @@ class TextArea(TextBox):
     def handle_events(self, events):
         super().handle_events(events)
 
-        if self.selected and not self._always_selected:
+        if self._always_selected:
+            self.selected = True
+
+        if not self.selected:
             return
 
         for event in events:
