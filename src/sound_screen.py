@@ -19,9 +19,9 @@ class SoundPlayerScreen(Screen):
         super().__init__()
         self._music = None
         self._music_name = ""
-        self._sound = None
-        self._sound_name = ""
-        self._sound_channel = pygame.mixer.Channel(0)
+        self._sounds = []
+        self._sound_names = []
+        self._sound_channels = []
         self._music_pause = False
         self._sound_pause = False
 
@@ -39,15 +39,22 @@ class SoundPlayerScreen(Screen):
                    button_size, self._pause_music),
             Button("X", (self._music_box.right + 2*function_width_size, 0),
                    button_size, self._stop_music)]
-        self._sound_function_buttons = [
-            Button("|>", (self._sound_box.right, box_height),
-                   button_size, self._play_sound),
-            Button("||", (self._sound_box.right + function_width_size, box_height),
-                   button_size, self._pause_sound),
-            Button("X", (self._sound_box.right + 2*function_width_size, box_height),
-                   button_size, self._stop_sound)]
+        self._sound_play_buttons = []
+        self._sound_pause_buttons = []
+        self._sound_stop_buttons = []
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
                                                  ("Load Sound", self._load_sound)])
+
+    def _init_sound_buttons(self, size_of_button, button_height, button_width):
+        for i in range(5):
+            self._sound_play_buttons.append(Button("|>", (self._sound_box.right, (i+1)*button_height),
+                                                   size_of_button, self._play_sound(i)))
+            self._sound_pause_buttons.append(Button("||", (self._sound_box.right + button_width,
+                                                           (i+1)*button_height),
+                                                    size_of_button, self._pause_sound(i)))
+            self._sound_stop_buttons.append(Button("X", (self._sound_box.right + 2*button_width,
+                                                         (i+1)*button_height),
+                                                   size_of_button, self._stop_sound(i)))
 
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
@@ -58,14 +65,14 @@ class SoundPlayerScreen(Screen):
             self._music = pygame.mixer.music.load(path)
             self._music_name = os.path.basename(path)
 
-    def _load_sound(self):
+    def _load_sound(self, i):
         """" Loads the sound file from a pop-up dialog box """
         path = self.sound_loader.file_dialog()
         if path != "":
             if pygame.mixer.get_busy():
                 pygame.mixer.stop()
-            self._sound = pygame.mixer.Sound(path)
-            self._sound_name = os.path.basename(path)
+            self._sounds.append(pygame.mixer.Sound(path))
+            self._sound_names.append(os.path.basename(path))
 
     def _draw(self, screen):
         """ Draws to the screen """
@@ -105,18 +112,18 @@ class SoundPlayerScreen(Screen):
         self._music_pause = True
         pygame.mixer.music.pause()
 
-    def _play_sound(self):
+    def _play_sound(self, i):
         if self._sound_pause:
             self._sound_pause = False
             self._sound_channel.unpause()
         else:
             self._sound_channel.play(self._sound)
 
-    def _pause_sound(self):
+    def _pause_sound(self, i):
         self._sound_pause = True
         self._sound_channel.pause()
 
-    def _stop_sound(self):
+    def _stop_sound(self, i):
         self._sound_channel.stop()
 
     def _update(self):
