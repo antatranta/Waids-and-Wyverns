@@ -33,7 +33,10 @@ class DiceRollerScreen(Screen):
         self._disadvantage_button = Button("Disadvantage", (advantage_x + 120, 350), (120, 30),
                                            self._roll_disadvantage)
 
-        self._roll_button = Button("Roll", (275, 400), (100, 50), self._die_roll)
+        self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
+        self._save_button = Button("Save?", (250, 400), (100, 50), self._save_macro)
+        self.input = TextBox((380, 400), (200, 50), "Macro Name?")
+
     def _draw(self, screen):
         for die in self._dice:
             die.draw(screen)
@@ -51,6 +54,8 @@ class DiceRollerScreen(Screen):
                                         (results_x, self._disadvantage_button.rect.top))
 
         self._roll_button.draw(screen)
+        self._save_button.draw(screen)
+        self.input.draw(screen)
 
     def _die_roll(self):
         self._die_result = []
@@ -59,6 +64,19 @@ class DiceRollerScreen(Screen):
             modifier = int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
+
+    def _save_macro(self):
+        self._die_result = []
+        for die in self._dice:
+            times = int(die.input.value if die.input.value != "" else 0)
+            modifier = int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
+            self._die_result.append(roll_results(times, f"d{die.sides}",
+                                                 die.modifier.value != "", modifier))
+        with open("macros.txt", 'w', encoding='utf-8') as f:
+            f.write("my first file\n")
+            f.write("This file\n\n")
+            f.write("contains three lines\n")
+            f.write(str(self._dice_results))
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
@@ -73,6 +91,7 @@ class DiceRollerScreen(Screen):
             die.handle_events(events)
 
         self._roll_button.handle_events(events)
+        #self._save_macro.handle_events(events)
         self._advantage_button.handle_events(events)
         self._disadvantage_button.handle_events(events)
 
@@ -112,6 +131,7 @@ class _Dice:
                              allowed=NUMERIC_KEYS, center=True)
         self.modifier = TextBox((self.input.rect.right + self._mod_width,
                                  pos[1]), (50, 30), allowed=ARITHMETIC_KEYS, center=True)
+
 
     def draw(self, screen):
         """Draw this component to screen."""
