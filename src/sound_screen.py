@@ -22,6 +22,7 @@ class SoundPlayerScreen(Screen):
         self._sounds = []
         self._sound_names = []
         self._sound_channels = []
+        self._sound_iterator = 0
         self._music_pause = False
         self._sound_pause = False
 
@@ -45,9 +46,11 @@ class SoundPlayerScreen(Screen):
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
                                                  ("Load Sound", self._load_sound)])
 
-    def _init_sound_buttons(self, size_of_button, button_height, button_width):
+    def _init_sound_buttons_and_channels(self, size_of_button, button_height, button_width):
+        """ Initializes the individual sound buttons and sound channels """
         for i in range(5):
-            self._sound_play_buttons.append(Button("|>", (self._sound_box.right, (i+1)*button_height),
+            self._sound_play_buttons.append(Button("|>", (self._sound_box.right,
+                                                          (i+1)*button_height),
                                                    size_of_button, self._play_sound(i)))
             self._sound_pause_buttons.append(Button("||", (self._sound_box.right + button_width,
                                                            (i+1)*button_height),
@@ -55,6 +58,8 @@ class SoundPlayerScreen(Screen):
             self._sound_stop_buttons.append(Button("X", (self._sound_box.right + 2*button_width,
                                                          (i+1)*button_height),
                                                    size_of_button, self._stop_sound(i)))
+
+            self._sound_channels.append(pygame.mixer.Channel(i))
 
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
@@ -65,14 +70,19 @@ class SoundPlayerScreen(Screen):
             self._music = pygame.mixer.music.load(path)
             self._music_name = os.path.basename(path)
 
-    def _load_sound(self, i):
+    def _load_sound(self):
         """" Loads the sound file from a pop-up dialog box """
         path = self.sound_loader.file_dialog()
         if path != "":
-            if pygame.mixer.get_busy():
-                pygame.mixer.stop()
-            self._sounds.append(pygame.mixer.Sound(path))
-            self._sound_names.append(os.path.basename(path))
+            if self._sound_iterator > 4:
+                self._sound_iterator = 0
+
+            self._sounds.pop(self._sound_iterator)
+            self._sounds.insert(self._sound_iterator, pygame.mixer.Sound(path))
+            self._sounds.pop(self._sound_iterator)
+            self._sound_names.insert(self._sound_iterator, os.path.basename(path))
+
+            self._sound_iterator += 1
 
     def _draw(self, screen):
         """ Draws to the screen """
@@ -117,23 +127,23 @@ class SoundPlayerScreen(Screen):
             self._sound_pause = False
             self._sound_channel.unpause()
         else:
-            self._sound_channel.play(self._sound)
+            self._sound_channels[i].play(self._sounds[i])
 
     def _pause_sound(self, i):
         self._sound_pause = True
-        self._sound_channel.pause()
+        self._sound_channels[i].pause()
 
     def _stop_sound(self, i):
-        self._sound_channel.stop()
+        self._sound_channels[i].stop()
 
     def _update(self):
         music_loaded = bool(self._music_name)
         for button in self._music_function_buttons:
             button.enabled = music_loaded
 
-        sound_loaded = bool(self._sound_name)
-        for button in self._sound_function_buttons:
-            button.enabled = sound_loaded
+        #sound_loaded = bool(self._sound_names)
+        #for button in self._sound_function_buttons:
+        #    button.enabled = sound_loaded
 
     def _handle_events(self, events):
         """ Handle events in sound player """
