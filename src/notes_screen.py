@@ -1,7 +1,6 @@
 """All Utilities and Classes for Notes Graphical Display"""
-
-import pygame
 import os
+import pygame
 
 from .gui.screen import Screen
 from .gui.textbox import TextArea
