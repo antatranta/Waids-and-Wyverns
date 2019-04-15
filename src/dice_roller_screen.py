@@ -16,7 +16,7 @@ class DiceRollerScreen(Screen):
         super().__init__()
 
         y_pos = 0
-
+        self._ouput = None
         self._die_result = None
         self._advantage_result = None
         self._macro_result = None
@@ -35,7 +35,7 @@ class DiceRollerScreen(Screen):
                                            self._roll_disadvantage)
 
         self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
-        self._macro_button = Button("Macro", (250, 400), (100, 50), self._return_macro)
+        self._macro_button = Button("Macro", (250, 400), (100, 50), self._load_macro)
         self._macro_input = TextBox((380, 400), (200, 50), "Macro Name")
 
     def _draw(self, screen):
@@ -54,7 +54,7 @@ class DiceRollerScreen(Screen):
             self._draw_advantage_result(screen, self._advantage_result,
                                         (results_x, self._disadvantage_button.rect.top))
 
-        if self._macro_result:
+        if self._macro_result is not None:
             self._draw_macro_result(screen, (480, 350))
 
         self._roll_button.draw(screen)
@@ -69,10 +69,10 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-    def _return_macro(self):
+    def _load_macro(self):
         self._macro_result = 0
         '''Receives input from user'''
-        input_val = str(self._macro_input.value if self._macro_input.value != "" else 0)
+        input_val = str(self._macro_input.value)  #if self._macro_input.value != "" else 0
 
         with open("src\macros.txt", "r") as filestream:
             for line in filestream:
@@ -116,9 +116,12 @@ class DiceRollerScreen(Screen):
                         else:
                             self._macro_result = roll_results(int(currentline[7]), "d100", False, int(currentline[8]))
 
-                    output = str(self._macro_result[0]) + " + " + str(self._macro_result[1]) + " = " \
-                        + str(self._macro_result[2])
-                    return output
+        #Return output with three roll results
+        rolls = '+'.join(str(e) for e in self._macro_result[0])
+        modifier = str(self._macro_result[1])
+        total = str(self._macro_result[2])
+        output = rolls + "+(" + modifier + ")=" + total
+        self._output = output
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
@@ -158,8 +161,7 @@ class DiceRollerScreen(Screen):
         draw_text(screen, self._font, f"{rolls[0]} vs {rolls[1]} => {value}", pos)
 
     def _draw_macro_result(self, screen, pos):
-        output = self._return_macro()
-        draw_text(screen, self._font, output, pos)
+        draw_text(screen, self._font, self._output, pos)
 
 
 class _Dice:
