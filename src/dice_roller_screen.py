@@ -1,4 +1,6 @@
 """All Utilities and Classes for Dice Roller Graphical Display"""
+# pylint: disable=too-many-instance-attributes
+
 import re
 
 import pygame
@@ -70,16 +72,16 @@ class DiceRollerScreen(Screen):
                                                  die.modifier.value != "", modifier))
 
     def _load_macro(self):
-        self._macro_result = 0
-        #Receives input from user
-        input_val = str(self._macro_input.value)  #if self._macro_input.value != "" else 0
+        self._macro_result = 0  # pylint: disable=too-many-branches
+        # Receives input from user
+        input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
 
-        with open("src\macros.txt", "r") as filestream:
+        with open("src\macros.txt", "r") as filestream:  # pylint: disable=anomalous-backslash-in-string
             for line in filestream:
                 currentline = line.split(",")
-                #Check if macro name is first element of each line
+                # Check if macro name is first element of each line
                 if input_val in currentline[0]:
-                    #Check for each value afterwards
+                    # Check for each value afterwards
                     if int(currentline[1]) != 0:
                         if int(currentline[8]) != 0:
                             self._macro_result = roll_results(int(currentline[1]), "d4",
@@ -130,12 +132,12 @@ class DiceRollerScreen(Screen):
                             self._macro_result = roll_results(int(currentline[7]), "d100",
                                                               False, int(currentline[8]))
 
-        #Return output with three roll results
+        # Return output with three roll results
         rolls = '+'.join(str(e) for e in self._macro_result[0])
         modifier = str(self._macro_result[1])
         total = str(self._macro_result[2])
         output = rolls + "+(" + modifier + ")=" + total
-        self._output = output
+        self._output = output  # pylint: disable=attribute-defined-outside-init
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
