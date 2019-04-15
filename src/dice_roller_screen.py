@@ -19,13 +19,14 @@ class DiceRollerScreen(Screen):
 
         self._die_result = None
         self._advantage_result = None
+        self._macro_result = None
         self._dice = [] # blank list
         self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
 
         for sides in self._dicesides:
             # increment so that you can append to blank list
             self._dice.append(_Dice((0, y_pos), sides))
-            y_pos += 50 # increase the y position so it's spaced out between the boxes when printed
+            y_pos += 50  # increase the y position so it's spaced out between the boxes when printed
 
         advantage_x, _ = self._font.size("D20 with:  ")
         self._advantage_button = Button("Advantage", (advantage_x, 350), (120, 30),
@@ -34,8 +35,8 @@ class DiceRollerScreen(Screen):
                                            self._roll_disadvantage)
 
         self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
-        self._save_button = Button("Save?", (250, 400), (100, 50), self._save_macro)
-        self.input = TextBox((380, 400), (200, 50), "Macro Name?")
+        self._macro_button = Button("Macro", (250, 400), (100, 50), self._return_macro)
+        self._macro_input = TextBox((380, 400), (200, 50), "Macro Name")
 
     def _draw(self, screen):
         for die in self._dice:
@@ -53,9 +54,12 @@ class DiceRollerScreen(Screen):
             self._draw_advantage_result(screen, self._advantage_result,
                                         (results_x, self._disadvantage_button.rect.top))
 
+        if self._macro_result:
+            self._draw_macro_result(screen, (480, 350))
+
         self._roll_button.draw(screen)
-        self._save_button.draw(screen)
-        self.input.draw(screen)
+        self._macro_button.draw(screen)
+        self._macro_input.draw(screen)
 
     def _die_roll(self):
         self._die_result = []
@@ -65,18 +69,56 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-    def _save_macro(self):
-        self._die_result = []
-        for die in self._dice:
-            times = int(die.input.value if die.input.value != "" else 0)
-            modifier = int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
-            self._die_result.append(roll_results(times, f"d{die.sides}",
-                                                 die.modifier.value != "", modifier))
-        with open("macros.txt", 'w', encoding='utf-8') as f:
-            f.write("my first file\n")
-            f.write("This file\n\n")
-            f.write("contains three lines\n")
-            f.write(str(self._dice_results))
+    def _return_macro(self):
+        self._macro_result = 0
+        '''Receives input from user'''
+        input_val = str(self._macro_input.value if self._macro_input.value != "" else 0)
+
+        with open("src\macros.txt", "r") as filestream:
+            for line in filestream:
+                currentline = line.split(",")
+                '''Check if macro name is first element of each line'''
+                if input_val in currentline[0]:
+                    '''Check for each value afterwards'''
+                    if int(currentline[1]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[1]), "d4", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[1]), "d4", False, int(currentline[8]))
+                    if int(currentline[2]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[2]), "d6", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[2]), "d6", False, int(currentline[8]))
+                    if int(currentline[3]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[3]), "d8", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[3]), "d8", False, int(currentline[8]))
+                    if int(currentline[4]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[4]), "d10", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[4]), "d10", False, int(currentline[8]))
+                    if int(currentline[5]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[5]), "d12", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[5]), "d12", False, int(currentline[8]))
+                    if int(currentline[6]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[6]), "d20", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[6]), "d20", False, int(currentline[8]))
+                    if int(currentline[7]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result = roll_results(int(currentline[7]), "d100", True, int(currentline[8]))
+                        else:
+                            self._macro_result = roll_results(int(currentline[7]), "d100", False, int(currentline[8]))
+
+                    output = str(self._macro_result[0]) + " + " + str(self._macro_result[1]) + " = " \
+                        + str(self._macro_result[2])
+                    return output
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
@@ -91,9 +133,10 @@ class DiceRollerScreen(Screen):
             die.handle_events(events)
 
         self._roll_button.handle_events(events)
-        #self._save_macro.handle_events(events)
+        self._macro_button.handle_events(events)
         self._advantage_button.handle_events(events)
         self._disadvantage_button.handle_events(events)
+        self._macro_input.handle_events(events)
 
         for event in events:
             if event.type == pygame.KEYUP: # if key is released
@@ -114,6 +157,10 @@ class DiceRollerScreen(Screen):
         rolls, value = results
         draw_text(screen, self._font, f"{rolls[0]} vs {rolls[1]} => {value}", pos)
 
+    def _draw_macro_result(self, screen, pos):
+        output = self._return_macro()
+        draw_text(screen, self._font, output, pos)
+
 
 class _Dice:
 
@@ -131,7 +178,6 @@ class _Dice:
                              allowed=NUMERIC_KEYS, center=True)
         self.modifier = TextBox((self.input.rect.right + self._mod_width,
                                  pos[1]), (50, 30), allowed=ARITHMETIC_KEYS, center=True)
-
 
     def draw(self, screen):
         """Draw this component to screen."""
