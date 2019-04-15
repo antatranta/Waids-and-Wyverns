@@ -1,5 +1,6 @@
 """All Utilities and Classes for Dice Roller Graphical Display"""
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-branches
 
 import re
 
@@ -72,7 +73,7 @@ class DiceRollerScreen(Screen):
                                                  die.modifier.value != "", modifier))
 
     def _load_macro(self):
-        self._macro_result = 0  # pylint: disable=too-many-branches
+        self._macro_result = 0
         # Receives input from user
         input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
 
