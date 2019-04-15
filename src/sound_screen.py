@@ -91,7 +91,7 @@ class SoundPlayerScreen(Screen):
         """" Loads the sound file from a pop-up dialog box """
         path = self.sound_loader.file_dialog()
         if path != "":
-            if self._sound_iterator > 4:
+            if self._sound_iterator > (NUM_OF_SOUND_CHANNELS - 1):
                 self._sound_iterator = 0
 
             self._sounds.pop(self._sound_iterator)
