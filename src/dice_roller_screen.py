@@ -77,7 +77,7 @@ class DiceRollerScreen(Screen):
         # Receives input from user
         input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
 
-        with open("assets\macros.txt", "r") as filestream:
+        with open("assets\\macros.txt", "r") as filestream:
             for line in filestream:
                 currentline = line.split(",")
                 # Check if macro name is first element of each line
