@@ -26,7 +26,7 @@ class NotesScreen(Screen):
         for event in events:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    self.file = open(self.notes_path, "r+")
+                    self.file = open(self.notes_path, "w")
                     self.file.write(self._textarea.value)
                     self.file.close()
                     self.close()
