@@ -2,13 +2,18 @@
 #pylint: disable=too-many-instance-attributes
 
 import os.path
+import math
 import pygame
 
 from .file_loader import MusicFileLoader, SoundFileLoader
 from .gui.screen import Screen
 from .gui.utils import draw_text, Button
 
-NUM_OF_SOUND_CHANNELS = 10
+NUM_OF_SOUND_CHANNELS = int(math.floor(Screen.screen_height / (Screen.screen_height * 0.05)) - 2)
+BOX_HEIGHT = Screen.screen_height * 0.05
+BOX_WIDTH = Screen.screen_width * 0.70
+BUTTON_WIDTH = (Screen.screen_width - BOX_WIDTH) / 3
+BUTTON_SIZE = (BUTTON_WIDTH, BOX_HEIGHT)
 
 
 class SoundPlayerScreen(Screen):
@@ -30,50 +35,38 @@ class SoundPlayerScreen(Screen):
         self._sound_iterator = 0
         self._sound_pauses = []
 
-        box_height = (super().screen_height * 0.05)
-        box_width = (super().screen_width * 0.70)
-        function_width_size = (super().screen_width - box_width) / 3
-        button_size = (function_width_size, box_height)
-
-        self._music_box = pygame.Rect(0, 0, box_width, box_height)
+        self._music_box = pygame.Rect(0, 0, BOX_WIDTH, BOX_HEIGHT)
         self._music_function_buttons = [
             Button("|>", (self._music_box.right, 0),
-                   button_size, self._play_music),
-            Button("||", (self._music_box.right + function_width_size, 0),
-                   button_size, self._pause_music),
-            Button("X", (self._music_box.right + 2*function_width_size, 0),
-                   button_size, self._stop_music)]
+                   BUTTON_SIZE, self._play_music),
+            Button("||", (self._music_box.right + BUTTON_WIDTH, 0),
+                   BUTTON_SIZE, self._pause_music),
+            Button("X", (self._music_box.right + 2*BUTTON_WIDTH, 0),
+                   BUTTON_SIZE, self._stop_music)]
         self._sound_boxes = []
         self._sound_play_buttons = []
         self._sound_pause_buttons = []
         self._sound_stop_buttons = []
-        self._init_sounds(box_width, box_height, button_size, function_width_size)
+        self._init_sounds()
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
                                                  ("Load Sound", self._load_sound)])
 
-    def _init_sounds(self, rect_width, rect_height, size_of_button, button_width):
-        """
-        Initializes the individual sounds
-
-        :param rect_width:
-        :param rect_height:
-        :param size_of_button:
-        :param button_width:
-        """
+    def _init_sounds(self):
+        """ Initializes the individual sounds """
         for i in range(NUM_OF_SOUND_CHANNELS):
             self._sound_names.append("")
             self._sounds.append("")
-            self._sound_boxes.append(pygame.Rect(0, (i+1) * rect_height, rect_width, rect_height))
+            self._sound_boxes.append(pygame.Rect(0, (i+1) * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT))
 
             self._sound_play_buttons.append(Button("|>", (self._sound_boxes[i].right,
-                                                          (i+1) * rect_height),
-                                                   size_of_button, self._play_sound, [i]))
+                                                          (i+1) * BOX_HEIGHT),
+                                                   BUTTON_SIZE, self._play_sound, [i]))
             self._sound_pause_buttons.append(Button("||", (self._sound_boxes[i].right +
-                                                           button_width, (i+1) * rect_height),
-                                                    size_of_button, self._pause_sound, [i]))
+                                                           BUTTON_WIDTH, (i + 1) * BOX_HEIGHT),
+                                                    BUTTON_SIZE, self._pause_sound, [i]))
             self._sound_stop_buttons.append(Button("X", (self._sound_boxes[i].right + 2 *
-                                                         button_width, (i+1) * rect_height),
-                                                   size_of_button, self._stop_sound, [i]))
+                                                         BUTTON_WIDTH, (i + 1) * BOX_HEIGHT),
+                                                   BUTTON_SIZE, self._stop_sound, [i]))
 
             self._sound_channels.append(pygame.mixer.Channel(i))
             self._sound_pauses.append(False)
