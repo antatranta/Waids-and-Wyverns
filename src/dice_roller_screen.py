@@ -19,7 +19,7 @@ class DiceRollerScreen(Screen):
         super().__init__()
 
         y_pos = 0
-        self._ouput = None
+        self._output = None
         self._die_result = None
         self._advantage_result = None
         self._macro_result = None
@@ -138,7 +138,7 @@ class DiceRollerScreen(Screen):
         modifier = str(self._macro_result[1])
         total = str(self._macro_result[2])
         output = rolls + "+(" + modifier + ")=" + total
-        self._output = output  # pylint: disable=attribute-defined-outside-init
+        self._output = output
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
