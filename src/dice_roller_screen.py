@@ -87,10 +87,12 @@ class DiceRollerScreen(Screen):
                     if int(currentline[i+1]) != 0:
                         if int(currentline[8]) != 0:
                             self._macro_result.append(roll_results(
-                                int(currentline[i + 1]), "d" + str(sides), False, int(currentline[8])))
+                                int(currentline[i + 1]), "d" +
+                                str(sides), False, int(currentline[8])))
                         else:
                             self._macro_result.append(roll_results(
-                                int(currentline[i + 1]), "d" + str(sides), True, int(currentline[8])))
+                                int(currentline[i + 1]), "d" +
+                                str(sides), True, int(currentline[8])))
                 rolls = '+'.join(str(e) for e in self._macro_result[0][0])
                 modifier = str(self._macro_result[0][1])
                 total = str(self._macro_result[0][2])
