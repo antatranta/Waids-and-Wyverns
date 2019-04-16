@@ -11,7 +11,8 @@ class NotesScreen(Screen):
 
     def __init__(self):
         super().__init__()
-        self.file = open(os.path.join(".", "assets", "media", "notes", "notes.txt"), "r+")
+        self.notes_path = os.path.join(".", "assets", "media", "notes", "notes.txt")
+        self.file = open(self.notes_path, "r+")
         self._textarea = TextArea((0, 0), (self.screen_width, self.screen_height),
                                   always_selected=True, initial_value=self.file.read())
 
@@ -25,7 +26,7 @@ class NotesScreen(Screen):
         for event in events:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    self.file = open(os.path.join(".", "assets", "media", "notes", "notes.txt"), "r+")
+                    self.file = open(self.notes_path, "r+")
                     self.file.write(self._textarea.value)
                     self.file.close()
                     self.close()
