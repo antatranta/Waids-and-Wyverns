@@ -12,9 +12,10 @@ class NotesScreen(Screen):
     def __init__(self):
         super().__init__()
         self.notes_path = os.path.join(".", "assets", "media", "notes", "notes.txt")
-        self.file = open(self.notes_path, "r+")
+        self.file = open(self.notes_path, "r" if os.path.exists(self.notes_path) else "w+")
         self._textarea = TextArea((0, 0), (self.screen_width, self.screen_height),
                                   always_selected=True, initial_value=self.file.read())
+        self.file.close()
 
     def _draw(self, screen):
         self._textarea.draw(screen)
