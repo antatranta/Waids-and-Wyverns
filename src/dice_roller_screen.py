@@ -1,6 +1,5 @@
 """All Utilities and Classes for Dice Roller Graphical Display"""
 # pylint: disable=too-many-instance-attributes
-# pylint: disable=too-many-branches
 
 import re
 
@@ -8,7 +7,7 @@ import pygame
 
 from .gui.screen import Screen
 from .gui.textbox import TextBox, NUMERIC_KEYS, ARITHMETIC_KEYS
-from .gui.utils import draw_text, Button
+from .gui.utils import draw_text, Button, load_font
 from .dice import roll_results, advantage_disadvantage
 
 
@@ -73,7 +72,7 @@ class DiceRollerScreen(Screen):
                                                  die.modifier.value != "", modifier))
 
     def _load_macro(self):
-        self._macro_result = 0
+        self._macro_result = []
         # Receives input from user
         input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
 
@@ -81,64 +80,22 @@ class DiceRollerScreen(Screen):
             for line in filestream:
                 currentline = line.split(",")
                 # Check if macro name is first element of each line
-                if input_val in currentline[0]:
-                    # Check for each value afterwards
-                    if int(currentline[1]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[1]), "d4",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[1]), "d4",
-                                                              False, int(currentline[8]))
-                    if int(currentline[2]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[2]), "d6",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[2]), "d6",
-                                                              False, int(currentline[8]))
-                    if int(currentline[3]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[3]), "d8",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[3]), "d8",
-                                                              False, int(currentline[8]))
-                    if int(currentline[4]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[4]), "d10",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[4]), "d10",
-                                                              False, int(currentline[8]))
-                    if int(currentline[5]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[5]), "d12",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[5]), "d12",
-                                                              False, int(currentline[8]))
-                    if int(currentline[6]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[6]), "d20",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[6]), "d20",
-                                                              False, int(currentline[8]))
-                    if int(currentline[7]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result = roll_results(int(currentline[7]), "d100",
-                                                              True, int(currentline[8]))
-                        else:
-                            self._macro_result = roll_results(int(currentline[7]), "d100",
-                                                              False, int(currentline[8]))
 
-        # Return output with three roll results
-        rolls = '+'.join(str(e) for e in self._macro_result[0])
-        modifier = str(self._macro_result[1])
-        total = str(self._macro_result[2])
-        output = rolls + "+(" + modifier + ")=" + total
-        self._output = output
+                if input_val not in currentline[0]:
+                    continue
+                for i, sides in enumerate(self._dicesides):
+                    if int(currentline[i+1]) != 0:
+                        if int(currentline[8]) != 0:
+                            self._macro_result.append(roll_results(int(currentline[i + 1]), "d" + str(sides),
+                                                                   False, int(currentline[8])))
+                        else:
+                            self._macro_result.append(roll_results(int(currentline[i + 1]), "d" + str(sides),
+                                                                   True, int(currentline[8])))
+                rolls = '+'.join(str(e) for e in self._macro_result[0][0])
+                modifier = str(self._macro_result[0][1])
+                total = str(self._macro_result[0][2])
+                output = rolls + "+(" + modifier + ")=" + total
+                self._output = output
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
@@ -186,7 +143,7 @@ class _Dice:
     def __init__(self, pos, sides):
         self.pos = pos
         self.sides = sides
-        self._font = pygame.font.SysFont('comicsansms', 18)
+        self._font = load_font()
 
         self._mod_width, _ = self._font.size("Modifier:")  # returns something
 
