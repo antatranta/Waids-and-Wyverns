@@ -2,6 +2,7 @@
 # pylint: disable=too-many-instance-attributes
 
 import re
+import os
 
 import pygame
 
@@ -57,7 +58,7 @@ class DiceRollerScreen(Screen):
                                         (results_x, self._disadvantage_button.rect.top))
 
         if self._macro_result is not None:
-            self._draw_macro_result(screen, (480, 350))
+            self._draw_macro_result(screen, (480, 390))
 
         self._roll_button.draw(screen)
         self._macro_button.draw(screen)
@@ -75,14 +76,16 @@ class DiceRollerScreen(Screen):
         self._macro_result = []
         # Receives input from user
         input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
+        self._output = f"Invalid macro \"{input_val}\""
 
-        with open("assets\\macros.txt", "r") as filestream:
+        with open(os.path.join("assets", "macros.txt"), "r") as filestream:
             for line in filestream:
                 currentline = line.split(",")
                 # Check if macro name is first element of each line
 
-                if input_val not in currentline[0]:
+                if input_val.lower() != currentline[0].lower():
                     continue
+
                 for i, sides in enumerate(self._dicesides):
                     if int(currentline[i+1]) != 0:
                         if int(currentline[8]) != 0:
@@ -93,10 +96,11 @@ class DiceRollerScreen(Screen):
                             self._macro_result.append(roll_results(
                                 int(currentline[i + 1]), "d" +
                                 str(sides), True, int(currentline[8])))
-                rolls = '+'.join(str(e) for e in self._macro_result[0][0])
+
+                rolls = ' + '.join(str(e) for e in self._macro_result[0][0])
                 modifier = str(self._macro_result[0][1])
                 total = str(self._macro_result[0][2])
-                output = rolls + "+(" + modifier + ")=" + total
+                output = rolls + " + (" + modifier + ") =" + total
                 self._output = output
 
     def _roll_advantage(self):
@@ -137,7 +141,7 @@ class DiceRollerScreen(Screen):
         draw_text(screen, self._font, f"{rolls[0]} vs {rolls[1]} => {value}", pos)
 
     def _draw_macro_result(self, screen, pos):
-        draw_text(screen, self._font, self._output, pos)
+        draw_text(screen, self._font, self._output, pos, center=True)
 
 
 class _Dice:
