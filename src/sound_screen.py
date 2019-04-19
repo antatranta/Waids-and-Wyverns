@@ -3,8 +3,8 @@
 
 import os.path
 import math
-import pygame
 import pickle
+import pygame
 
 from .file_loader import MusicFileLoader, SoundFileLoader
 from .gui.screen import Screen
