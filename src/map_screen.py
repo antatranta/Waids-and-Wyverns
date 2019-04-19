@@ -10,6 +10,9 @@ from .gui.utils import DraggableMixin, load_image, draw_text
 class MapAndCharacterScreen(Screen):
     """ Class to start Map and Character Screen """
 
+    MAX_ZOOM = 5.0
+    MIN_ZOOM = 1.0
+
     map_loader = MapFileLoader()
     character_loader = CharacterFileLoader()
 
@@ -18,6 +21,7 @@ class MapAndCharacterScreen(Screen):
         self._characters = []
         self._map = None
         self._remove_mode = False
+        self.zoom = 1.0
 
         self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
@@ -34,13 +38,15 @@ class MapAndCharacterScreen(Screen):
     def _load_character(self):
         path = self.character_loader.file_dialog()
         if path != "":
-            img = load_image(path, scale=(100, 100))
+            img = load_image(path)
             self._characters.append(_Character(img))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
         if self._map:
-            screen.blit(self._map, (0, 0))
+            img = pygame.transform.smoothscale(self._map, (int(self.screen_width * self.zoom),
+                                                           int(self.screen_height * self.zoom)))
+            screen.blit(img, (0, 0))
 
         for character in self._characters:
             character.draw(screen)
@@ -50,6 +56,7 @@ class MapAndCharacterScreen(Screen):
 
         if self._remove_mode:
             draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
+
 
     def _handle_events(self, events):
         """ Handle events in maps """
@@ -71,13 +78,27 @@ class MapAndCharacterScreen(Screen):
                 if event.key == pygame.K_ESCAPE:
                     self.close()
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_EQUALS:
+                    self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
+
+                if event.key == pygame.K_MINUS:
+                    self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
+
+                for character in self._characters:
+                    character.zoom = self.zoom
+
 
 class _Character(DraggableMixin):
     """ Allows characters to be dragged """
 
-    def __init__(self, img, pos=(0, 0)):
+    def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0):
+        self._full_res = img
+        self.size = size
+        self.img = pygame.transform.smoothscale(img, size)
+        self._pos = pos
+        self._zoom = zoom
         DraggableMixin.__init__(self, pos)
-        self.img = img
 
     @property
     def rect(self):
@@ -89,3 +110,26 @@ class _Character(DraggableMixin):
     def draw(self, screen):
         """Draw this element to screen."""
         screen.blit(self.img, self.pos)
+
+    @property
+    def zoom(self):
+        """Get the percentage zoomed."""
+        return self._zoom
+
+    @zoom.setter
+    def zoom(self, zoom):
+        """Set the percentage zoomed."""
+        self._zoom = zoom
+        self.img = pygame.transform.smoothscale(self._full_res,
+                                                (int(self.size[0] * zoom),
+                                                 int(self.size[0] * zoom)))
+
+    @property
+    def pos(self):
+        """Get the character's position."""
+        return (self._pos[0] * self.zoom, self._pos[1] * self.zoom)
+
+    @pos.setter
+    def pos(self, pos):
+        """Set the character's position."""
+        self._pos = (pos[0] / self.zoom, pos[1] / self.zoom)
