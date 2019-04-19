@@ -4,6 +4,7 @@
 import os.path
 import math
 import pygame
+import pickle
 
 from .file_loader import MusicFileLoader, SoundFileLoader
 from .gui.screen import Screen
@@ -25,7 +26,8 @@ class SoundPlayerScreen(Screen):
     def __init__(self):
         super().__init__()
         pygame.mixer.set_num_channels(NUM_OF_SOUND_CHANNELS)
-
+        #self._save_music = pickle.load(open("save.p", "rb+"))
+        self._save_music = {}
         self._music = None
         self._music_name = ""
         self._music_pause = False
@@ -79,6 +81,8 @@ class SoundPlayerScreen(Screen):
                 pygame.mixer.music.stop()
             self._music = pygame.mixer.music.load(path)
             self._music_name = os.path.basename(path)
+            pickle.dump(self._save_music, open("save.p", "wb"))
+            print(str(self._music_name))
 
     def _load_sound(self):
         """" Loads the sound file from a pop-up dialog box """
@@ -93,6 +97,7 @@ class SoundPlayerScreen(Screen):
             self._sound_names.insert(self._sound_iterator, os.path.basename(path))
 
             self._sound_iterator += 1
+            print(str(self._sound_names))
 
     def _draw(self, screen):
         """ Draws to the screen """
