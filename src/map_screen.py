@@ -78,11 +78,11 @@ class MapAndCharacterScreen(Screen):
                 if event.key == pygame.K_ESCAPE:
                     self.close()
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_EQUALS:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
                     self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
 
-                if event.key == pygame.K_MINUS:
+                if event.button == 5:
                     self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
 
                 for character in self._characters:
