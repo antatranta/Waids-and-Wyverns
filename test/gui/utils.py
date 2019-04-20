@@ -5,6 +5,8 @@ import pygame
 
 from src.gui.utils import DraggableMixin, Button
 
+pygame.init()
+
 class RectDraggable(DraggableMixin):
     def __init__(self, rect):
         self._pos = rect.topleft
@@ -20,9 +22,11 @@ class RectDraggable(DraggableMixin):
         self.rect.topleft = pos
         self._pos = pos
 
+
 class TestDraggableMixin(unittest.TestCase):
 
     def test_drag(self):
+
         rect = RectDraggable(pygame.Rect(0, 0, 100, 100))
 
         rect.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(200, 200), button=1),
@@ -43,6 +47,7 @@ class TestDraggableMixin(unittest.TestCase):
                             MagicMock(type=pygame.MOUSEMOTION, pos=(0, 0), buttons=(1, 0, 0))])
 
         self.assertEqual(rect.pos, (160, 160))
+
 
 class TestButton(unittest.TestCase):
 
