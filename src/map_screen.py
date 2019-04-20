@@ -44,9 +44,13 @@ class MapAndCharacterScreen(Screen):
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
         if self._map:
-            img = pygame.transform.smoothscale(self._map, (int(self.screen_width * self.zoom),
-                                                           int(self.screen_height * self.zoom)))
-            screen.blit(img, (0, 0))
+            img = pygame.transform.smoothscale(self._map, (int(screen.get_width() * self.zoom),
+                                                           int(screen.get_height() * self.zoom)))
+
+            img_pos = (screen.get_width() / 2 - img.get_width() / 2,
+                       screen.get_height() / 2 - img.get_height() / 2)
+
+            screen.blit(img, img_pos)
 
         for character in self._characters:
             character.draw(screen)
@@ -57,6 +61,11 @@ class MapAndCharacterScreen(Screen):
         if self._remove_mode:
             draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
 
+    def _zoom_in(self):
+        self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
+
+    def _zoom_out(self):
+        self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
 
     def _handle_events(self, events):
         """ Handle events in maps """
@@ -80,10 +89,10 @@ class MapAndCharacterScreen(Screen):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:
-                    self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
+                    self._zoom_in()
 
                 if event.button == 5:
-                    self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
+                    self._zoom_out()
 
                 for character in self._characters:
                     character.zoom = self.zoom
