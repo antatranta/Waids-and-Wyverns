@@ -1,5 +1,6 @@
 """Utilities for GUI related actions."""
 # pylint: disable=too-many-arguments
+# pylint: disable=too-few-public-methods
 
 import pygame
 
@@ -44,6 +45,7 @@ class Button:
                 if self.enabled:
                     self.action(*self.params)
 
+
 class DraggableMixin:
     """
     Mixin Class to allow objects to be draggable.
@@ -71,7 +73,8 @@ class DraggableMixin:
                 self._draggable_selected = False
 
                 if self._scalable_selected:
-                    new_width = abs(self.img.get_width() + (event.pos[0] - self._scalable_offset[0]))
+                    new_width = abs(self.img.get_width() +
+                                    (event.pos[0] - self._scalable_offset[0]))
                     new_height = new_width
                     self.img = pygame.transform.smoothscale(self.img, (new_width, new_height))
                 self._scalable_selected = False
