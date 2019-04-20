@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin, load_image, draw_text
+from .gui.utils import DragAndScaleMixin, load_image, draw_text
 
 
 class MapAndCharacterScreen(Screen):
@@ -35,7 +35,8 @@ class MapAndCharacterScreen(Screen):
         path = self.character_loader.file_dialog()
         if path != "":
             img = load_image(path, scale=(100, 100))
-            self._characters.append(_Character(img))
+            full_res_img = pygame.image.load(path)
+            self._characters.append(_Character(img, full_res_img))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
@@ -72,12 +73,13 @@ class MapAndCharacterScreen(Screen):
                     self.close()
 
 
-class _Character(DraggableMixin):
+class _Character(DragAndScaleMixin):
     """ Allows characters to be dragged """
 
-    def __init__(self, img, pos=(0, 0)):
-        DraggableMixin.__init__(self, pos)
+    def __init__(self, img, full_res_img, pos=(0, 0)):
+        DragAndScaleMixin.__init__(self, pos)
         self.img = img
+        self.full_res_img = full_res_img
 
     @property
     def rect(self):
