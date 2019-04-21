@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DraggableMixin, load_image, draw_text
+from .gui.utils import DragAndScaleMixin, load_image, draw_text
 
 
 class MapAndCharacterScreen(Screen):
@@ -105,21 +105,21 @@ class MapAndCharacterScreen(Screen):
                     self._zoom_out()
 
 
-class _Character(DraggableMixin):
+class _Character(DragAndScaleMixin):
     """ Allows characters to be dragged """
 
     def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0, zoom_offset=(0, 0)):
         # pylint: disable=too-many-arguments
-        self._full_res = img
+        self.full_res_img = img
         self._zoom = None
         self._pos = pos
 
-        self.size = size
+        self._size = size
         self.img = pygame.transform.smoothscale(img, size)
         self.zoom_offset = zoom_offset
         self.zoom = zoom
 
-        DraggableMixin.__init__(self, pos)
+        DragAndScaleMixin.__init__(self, pos)
 
     @property
     def rect(self):
@@ -141,9 +141,18 @@ class _Character(DraggableMixin):
     def zoom(self, zoom):
         """Set the percentage zoomed."""
         self._zoom = zoom
-        self.img = pygame.transform.smoothscale(self._full_res,
-                                                (int(self.size[0] * zoom),
-                                                 int(self.size[1] * zoom)))
+        self._resize_img()
+
+    @property
+    def size(self):
+        """Get the image width x height."""
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        """Set the image width x height."""
+        self._size = size
+        self._resize_img()
 
     @property
     def pos(self):
@@ -156,3 +165,8 @@ class _Character(DraggableMixin):
         """Set the character's position."""
         self._pos = ((pos[0] - self.zoom_offset[0]) / self.zoom,
                      (pos[1] - self.zoom_offset[1]) / self.zoom)
+
+    def _resize_img(self):
+        self.img = pygame.transform.smoothscale(self.full_res_img,
+                                                (int(self.size[0] * self.zoom),
+                                                 int(self.size[1] * self.zoom)))
