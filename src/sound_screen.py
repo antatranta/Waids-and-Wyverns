@@ -27,7 +27,10 @@ class SoundPlayerScreen(Screen):
         super().__init__()
         pygame.mixer.set_num_channels(NUM_OF_SOUND_CHANNELS)
         #self._save_music = pickle.load(open("save.p", "rb+"))
-        self._save_music = {}
+        self._save_music = {} # a list to keep track of what was loaded in
+        #self._save_sounds = pickle.load(open("save.waid", "rb+"))
+        #1. run with this first if you can
+        self._save_sounds = {}
         self._music = None
         self._music_name = ""
         self._music_pause = False
@@ -82,6 +85,7 @@ class SoundPlayerScreen(Screen):
             self._music = pygame.mixer.music.load(path)
             self._music_name = os.path.basename(path)
             pickle.dump(self._save_music, open("save.p", "wb"))
+            #using pickle we were able to save into _save_music
             print(str(self._music_name))
 
     def _load_sound(self):
@@ -97,6 +101,8 @@ class SoundPlayerScreen(Screen):
             self._sound_names.insert(self._sound_iterator, os.path.basename(path))
 
             self._sound_iterator += 1
+
+            pickle.dump(self._save_sounds, open("save.waid", "wb"))
             print(str(self._sound_names))
 
     def _draw(self, screen):
@@ -221,3 +227,5 @@ class SoundPlayerScreen(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
+            if event.type == pygame.KEYUP:
+                print(str(self._music_name))
