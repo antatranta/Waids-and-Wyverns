@@ -98,11 +98,13 @@ class DragAndScaleMixin:
                 if self._scalable_selected:
                     new_width = math.floor(abs(self.img.get_width() +
                                                ((event.pos[0] - self._scalable_offset[0]) / 10)))
-                    new_height = new_width
                     # so it doesnt shrink into nothingness
                     if new_width <= 25:
                         new_width = 25
-                        new_height = new_width
+                    # so it doesnt scale too big
+                    elif new_width >= 800:
+                        new_width = 800
+                    new_height = new_width
 
                     self.img = pygame.transform.smoothscale(self.full_res_img,
                                                             (new_width, new_height))
