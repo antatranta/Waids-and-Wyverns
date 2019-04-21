@@ -69,32 +69,29 @@ class DragAndScaleMixin:
     def handle_events(self, events):
         """Handle events for this element."""
         for event in events:
-            # mouse_buttons are in a tuple of (left click, middle click, and right click)
-            mouse_buttons = pygame.mouse.get_pressed()
-
             if event.type == pygame.MOUSEBUTTONUP:
                 self._draggable_selected = False
                 self._scalable_selected = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and mouse_buttons[0]:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.rect.collidepoint(event.pos):
                     self._draggable_selected = True
                     self._draggable_offset = (self.pos[0] - event.pos[0],
                                               self.pos[1] - event.pos[1])
 
-            elif event.type == pygame.MOUSEMOTION and mouse_buttons[0]:
+            elif event.type == pygame.MOUSEMOTION and event.buttons[0]:
                 if self._draggable_selected:
                     self.pos = (self._draggable_offset[0] + event.pos[0],
                                 self._draggable_offset[1] + event.pos[1])
                 else:
                     self._draggable_selected = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and mouse_buttons[2]:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 if self.rect.collidepoint(event.pos) and not self._scalable_selected:
                     self._scalable_selected = True
                     self._scalable_offset = (event.pos[0], event.pos[1])
 
-            elif event.type == pygame.MOUSEMOTION and mouse_buttons[2]:
+            elif event.type == pygame.MOUSEMOTION and event.buttons[2]:
                 if self._scalable_selected:
                     new_width = math.floor(abs(self.img.get_width() +
                                                ((event.pos[0] - self._scalable_offset[0]) / 10)))
