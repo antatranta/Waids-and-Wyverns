@@ -27,7 +27,7 @@ class TestDragAndScaleMixin(unittest.TestCase):
 
     def test_drag(self):
 
-        rect = RectDraggable(pygame.Rect(0, 0, 100, 100), pygame.Surface(100, 100))
+        rect = RectDraggable(pygame.Rect(0, 0, 100, 100), pygame.Surface((100, 100)))
 
         rect.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(200, 200), button=1),
                             MagicMock(type=pygame.MOUSEMOTION, pos=(400, 400), buttons=(1, 0, 0)),
