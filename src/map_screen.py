@@ -39,18 +39,14 @@ class MapAndCharacterScreen(Screen):
         path = self.character_loader.file_dialog()
         if path != "":
             img = load_image(path)
-            self._characters.append(_Character(img))
+            self._characters.append(_Character(img, zoom=self.zoom, zoom_offset=self.zoom_offset))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
         if self._map:
             img = pygame.transform.smoothscale(self._map, (int(screen.get_width() * self.zoom),
                                                            int(screen.get_height() * self.zoom)))
-
-            img_pos = (screen.get_width() / 2 - img.get_width() / 2,
-                       screen.get_height() / 2 - img.get_height() / 2)
-
-            screen.blit(img, img_pos)
+            screen.blit(img, self.zoom_offset)
 
         for character in self._characters:
             character.draw(screen)
@@ -61,11 +57,25 @@ class MapAndCharacterScreen(Screen):
         if self._remove_mode:
             draw_text(screen, self._font, "remove mode", (0, 0), color=(255, 0, 0))
 
+    @property
+    def zoom_offset(self):
+        """Get zoom offset"""
+        return (self.screen_width / 2 - self.screen_width * self.zoom / 2,
+                self.screen_height / 2 - self.screen_height * self.zoom / 2)
+
     def _zoom_in(self):
         self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
 
+        for character in self._characters:
+            character.zoom = self.zoom
+            character.zoom_offset = self.zoom_offset
+
     def _zoom_out(self):
         self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
+
+        for character in self._characters:
+            character.zoom = self.zoom
+            character.zoom_offset = self.zoom_offset
 
     def _handle_events(self, events):
         """ Handle events in maps """
@@ -94,19 +104,21 @@ class MapAndCharacterScreen(Screen):
                 if event.button == 5:
                     self._zoom_out()
 
-                for character in self._characters:
-                    character.zoom = self.zoom
-
 
 class _Character(DraggableMixin):
     """ Allows characters to be dragged """
 
-    def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0):
+    def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0, zoom_offset=(0, 0)):
+        # pylint: disable=too-many-arguments
         self._full_res = img
+        self._zoom = None
+        self._pos = pos
+
         self.size = size
         self.img = pygame.transform.smoothscale(img, size)
-        self._pos = pos
-        self._zoom = zoom
+        self.zoom_offset = zoom_offset
+        self.zoom = zoom
+
         DraggableMixin.__init__(self, pos)
 
     @property
@@ -131,14 +143,16 @@ class _Character(DraggableMixin):
         self._zoom = zoom
         self.img = pygame.transform.smoothscale(self._full_res,
                                                 (int(self.size[0] * zoom),
-                                                 int(self.size[0] * zoom)))
+                                                 int(self.size[1] * zoom)))
 
     @property
     def pos(self):
         """Get the character's position."""
-        return (self._pos[0] * self.zoom, self._pos[1] * self.zoom)
+        return (self._pos[0] * self.zoom + self.zoom_offset[0],
+                self._pos[1] * self.zoom + self.zoom_offset[1])
 
     @pos.setter
     def pos(self, pos):
         """Set the character's position."""
-        self._pos = (pos[0] / self.zoom, pos[1] / self.zoom)
+        self._pos = ((pos[0] - self.zoom_offset[0]) / self.zoom,
+                     (pos[1] - self.zoom_offset[1]) / self.zoom)
