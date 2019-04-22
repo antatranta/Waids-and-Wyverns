@@ -39,6 +39,7 @@ class SoundPlayerScreen(Screen):
         self._sound_channels = []
         self._sound_iterator = 0
         self._sound_pauses = []
+        print(pickle.load(open("save.waid", "rb")))
 
         self._music_box = pygame.Rect(0, 0, BOX_WIDTH, BOX_HEIGHT)
         self._music_function_buttons = [
@@ -76,6 +77,10 @@ class SoundPlayerScreen(Screen):
 
             self._sound_channels.append(pygame.mixer.Channel(i))
             self._sound_pauses.append(False)
+        for sound_name in pickle.load(open("save.waid", "rb")):
+            path = os.path.join(self.sound_loader.root, sound_name)
+            if sound_name:
+                self._pickle_sound(path)
 
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
@@ -100,13 +105,11 @@ class SoundPlayerScreen(Screen):
         if self._sound_iterator > (NUM_OF_SOUND_CHANNELS - 1):
             self._sound_iterator = 0
 
-        # pickle.dump(self._save_sounds, open("save.waid", "wb"))
-        print(str(self._sound_names))
         self._sounds.pop(self._sound_iterator)
         self._sounds.insert(self._sound_iterator, pygame.mixer.Sound(path))
         self._sound_names.pop(self._sound_iterator)
         self._sound_names.insert(self._sound_iterator, os.path.basename(path))
-        pickle.dump(self._save_sounds, open("save.waid", "wb"))
+        pickle.dump(self._sound_names, open("save.waid", "wb"))
         self._sound_iterator += 1
 
     def _draw(self, screen):
@@ -231,5 +234,3 @@ class SoundPlayerScreen(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
-            if event.type == pygame.KEYUP:
-                print(str(self._music_name))
