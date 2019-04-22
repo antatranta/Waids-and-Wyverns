@@ -4,7 +4,7 @@ import pygame
 
 from .file_loader import CharacterFileLoader, MapFileLoader
 from .gui.screen import Screen
-from .gui.utils import DragAndScaleMixin, load_image, draw_text
+from .gui.utils import DraggableMixin, DragAndScaleMixin, load_image, draw_text
 
 
 class MapAndCharacterScreen(Screen):
@@ -22,10 +22,19 @@ class MapAndCharacterScreen(Screen):
         self._map = None
         self._remove_mode = False
         self.zoom = 1.0
+        self._zoom_offset = (0, 0)
 
         self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
+
+        def drag(pos):
+            self.zoom_offset = pos
+
+        DraggableMixin.__init__(self, self._get_rect, drag)
+
+    def _get_rect(self):
+        return pygame.Rect(self.zoom_offset, (self.screen_width, self.screen_height))
 
     def _toggle_remove_mode(self):
         self._remove_mode = not self._remove_mode
@@ -60,29 +69,37 @@ class MapAndCharacterScreen(Screen):
     @property
     def zoom_offset(self):
         """Get zoom offset"""
-        return (self.screen_width / 2 - self.screen_width * self.zoom / 2,
-                self.screen_height / 2 - self.screen_height * self.zoom / 2)
+        return (self._zoom_offset[0] * self.zoom, self._zoom_offset[1] * self.zoom)
+
+    @zoom_offset.setter
+    def zoom_offset(self, zoom_offset):
+        self._zoom_offset = (zoom_offset[0] / self.zoom, zoom_offset[1] / self.zoom)
+        self._update_zooms(self.zoom, self.zoom_offset)
+
+    def _update_zooms(self, zoom, offset):
+        for character in self._characters:
+            character.zoom = zoom
+            character.zoom_offset = offset
 
     def _zoom_in(self):
         self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
-
-        for character in self._characters:
-            character.zoom = self.zoom
-            character.zoom_offset = self.zoom_offset
+        self._update_zooms(self.zoom, self.zoom_offset)
 
     def _zoom_out(self):
         self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
-
-        for character in self._characters:
-            character.zoom = self.zoom
-            character.zoom_offset = self.zoom_offset
+        self._update_zooms(self.zoom, self.zoom_offset)
 
     def _handle_events(self, events):
         """ Handle events in maps """
         super()._handle_events(events)
 
+        char_selected = False
         for character in self._characters:
             character.handle_events(events)
+            char_selected = char_selected or character.draggable_selected
+
+        if not char_selected:
+            DraggableMixin.handle_events(self, events)
 
         for button in self._buttons:
             button.handle_events(events)

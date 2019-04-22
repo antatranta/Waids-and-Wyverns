@@ -57,7 +57,7 @@ class DraggableMixin:
     """
 
     def __init__(self, rect, drag):
-        self._draggable_selected = False
+        self.draggable_selected = False
         self._draggable_offset = (0, 0)
 
         self._draggable_rect = rect
@@ -67,21 +67,21 @@ class DraggableMixin:
         """Handle events for this element."""
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
-                self._draggable_selected = False
+                self.draggable_selected = False
                 self._scalable_selected = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self._draggable_rect().collidepoint(event.pos):
-                    self._draggable_selected = True
+                    self.draggable_selected = True
                     self._draggable_offset = (self._draggable_rect().left - event.pos[0],
                                               self._draggable_rect().top - event.pos[1])
 
             elif event.type == pygame.MOUSEMOTION and event.buttons[0]:
-                if self._draggable_selected:
+                if self.draggable_selected:
                     self._draggable_drag((self._draggable_offset[0] + event.pos[0],
                                           self._draggable_offset[1] + event.pos[1]))
                 else:
-                    self._draggable_selected = False
+                    self.draggable_selected = False
 
 class DragAndScaleMixin(DraggableMixin):
     """
