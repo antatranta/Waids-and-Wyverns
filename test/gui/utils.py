@@ -3,27 +3,29 @@ from unittest.mock import MagicMock, patch
 
 import pygame
 
-from src.gui.utils import DraggableMixin, Button
+from src.gui.utils import DragAndScaleMixin, Button
 
-class RectDraggable(DraggableMixin):
-    def __init__(self, rect):
+
+class RectDraggable(DragAndScaleMixin):
+    def __init__(self, rect, surface):
         self._pos = rect.topleft
         self.rect = rect
-        DraggableMixin.__init__(self, rect.topleft)
+        self.surface = surface
+        DragAndScaleMixin.__init__(self, lambda: self.rect, self.set_pos)
 
     @property
     def pos(self):
-        return self._pos
+        return self.rect.topleft
 
-    @pos.setter
-    def pos(self, pos):
+    def set_pos(self, pos):
         self.rect.topleft = pos
-        self._pos = pos
 
-class TestDraggableMixin(unittest.TestCase):
+
+class TestDragAndScaleMixin(unittest.TestCase):
 
     def test_drag(self):
-        rect = RectDraggable(pygame.Rect(0, 0, 100, 100))
+
+        rect = RectDraggable(pygame.Rect(0, 0, 100, 100), pygame.Surface((100, 100)))
 
         rect.handle_events([MagicMock(type=pygame.MOUSEBUTTONDOWN, pos=(200, 200), button=1),
                             MagicMock(type=pygame.MOUSEMOTION, pos=(400, 400), buttons=(1, 0, 0)),
@@ -43,6 +45,7 @@ class TestDraggableMixin(unittest.TestCase):
                             MagicMock(type=pygame.MOUSEMOTION, pos=(0, 0), buttons=(1, 0, 0))])
 
         self.assertEqual(rect.pos, (160, 160))
+
 
 class TestButton(unittest.TestCase):
 
