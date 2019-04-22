@@ -11,16 +11,14 @@ class RectDraggable(DragAndScaleMixin):
         self._pos = rect.topleft
         self.rect = rect
         self.surface = surface
-        DragAndScaleMixin.__init__(self, rect.topleft)
+        DragAndScaleMixin.__init__(self, lambda: self.rect, self.set_pos)
 
     @property
     def pos(self):
-        return self._pos
+        return self.rect.topleft
 
-    @pos.setter
-    def pos(self, pos):
+    def set_pos(self, pos):
         self.rect.topleft = pos
-        self._pos = pos
 
 
 class TestDragAndScaleMixin(unittest.TestCase):

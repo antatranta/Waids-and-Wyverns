@@ -107,6 +107,7 @@ class MapAndCharacterScreen(Screen):
 
 class _Character(DragAndScaleMixin):
     """ Allows characters to be dragged """
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0, zoom_offset=(0, 0)):
         # pylint: disable=too-many-arguments
@@ -119,7 +120,10 @@ class _Character(DragAndScaleMixin):
         self.zoom_offset = zoom_offset
         self.zoom = zoom
 
-        DragAndScaleMixin.__init__(self, pos)
+        def update_pos(pos):
+            self.pos = pos
+
+        DragAndScaleMixin.__init__(self, lambda: self.rect, update_pos)
 
     @property
     def rect(self):
