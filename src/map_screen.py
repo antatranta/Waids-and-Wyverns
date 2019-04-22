@@ -34,7 +34,8 @@ class MapAndCharacterScreen(Screen):
         DraggableMixin.__init__(self, self._get_rect, drag)
 
     def _get_rect(self):
-        return pygame.Rect(self.zoom_offset, (self.screen_width, self.screen_height))
+        return pygame.Rect(self.zoom_offset,
+                           (self.screen_width * self.zoom, self.screen_height * self.zoom))
 
     def _toggle_remove_mode(self):
         self._remove_mode = not self._remove_mode
@@ -73,7 +74,10 @@ class MapAndCharacterScreen(Screen):
 
     @zoom_offset.setter
     def zoom_offset(self, zoom_offset):
-        self._zoom_offset = (zoom_offset[0] / self.zoom, zoom_offset[1] / self.zoom)
+        left = min(max(zoom_offset[0], self.screen_width * (1 - self.zoom)), 0)
+        top = min(max(zoom_offset[1], self.screen_height * (1 - self.zoom)), 0)
+
+        self._zoom_offset = (left / self.zoom, top / self.zoom)
         self._update_zooms(self.zoom, self.zoom_offset)
 
     def _update_zooms(self, zoom, offset):
@@ -83,10 +87,12 @@ class MapAndCharacterScreen(Screen):
 
     def _zoom_in(self):
         self.zoom = min(self.zoom * 1.2, self.MAX_ZOOM)
+        self.zoom_offset = self.zoom_offset
         self._update_zooms(self.zoom, self.zoom_offset)
 
     def _zoom_out(self):
         self.zoom = max(self.zoom * 0.8, self.MIN_ZOOM)
+        self.zoom_offset = self.zoom_offset
         self._update_zooms(self.zoom, self.zoom_offset)
 
     def _handle_events(self, events):
