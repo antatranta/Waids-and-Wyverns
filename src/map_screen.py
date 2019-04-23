@@ -45,8 +45,11 @@ class MapAndCharacterScreen(Screen):
 
     def _load_map(self):
         path = self.map_loader.file_dialog()
+        temp_filename = "tmp_img.png"
+
         if path != "":
             self._map = load_image(path, scale=(self.screen_width, self.screen_height))
+            pygame.image.save(self._map, temp_filename)
 
     def _load_character(self):
         path = self.character_loader.file_dialog()
@@ -55,6 +58,7 @@ class MapAndCharacterScreen(Screen):
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
+        screen.blit(load_image("tmp_img.png", scale=(self.screen_width, self.screen_height)), self.zoom_offset)
         if self._map:
             img = pygame.transform.smoothscale(self._map, (int(screen.get_width() * self.zoom),
                                                            int(screen.get_height() * self.zoom)))
