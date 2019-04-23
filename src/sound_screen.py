@@ -36,9 +36,6 @@ class SoundPlayerScreen(Screen):
         self._sound_channels = []
         self._sound_iterator = 0
         self._sound_pauses = []
-        print(pickle.load(open("save.waid", "rb")))
-        print(pickle.load(open("save.p", "rb")))
-
         self._sound_boxes = []
         self._sound_play_buttons = []
         self._sound_pause_buttons = []
@@ -86,14 +83,12 @@ class SoundPlayerScreen(Screen):
 
         path = os.path.join(self.music_loader.root, pickle.load(open("save.p", "rb")))
         self._pickle_music(path)
-        print(path + "from init")
 
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
         path = self.music_loader.file_dialog()
         if path != "":
             self._pickle_music(path)
-            print(path + "from load")
 
     def _load_sound(self):
         """" Loads the sound file from a pop-up dialog box """
