@@ -40,20 +40,14 @@ class SoundPlayerScreen(Screen):
         self._sound_iterator = 0
         self._sound_pauses = []
         print(pickle.load(open("save.waid", "rb")))
+        print(pickle.load(open("save.p", "rb")))
 
-        self._music_box = pygame.Rect(0, 0, BOX_WIDTH, BOX_HEIGHT)
-        self._music_function_buttons = [
-            Button("|>", (self._music_box.right, 0),
-                   BUTTON_SIZE, self._play_music),
-            Button("||", (self._music_box.right + BUTTON_WIDTH, 0),
-                   BUTTON_SIZE, self._pause_music),
-            Button("X", (self._music_box.right + 2*BUTTON_WIDTH, 0),
-                   BUTTON_SIZE, self._stop_music)]
         self._sound_boxes = []
         self._sound_play_buttons = []
         self._sound_pause_buttons = []
         self._sound_stop_buttons = []
         self._init_sounds()
+        self._init_music()
 
         self._load_buttons = self._init_buttons([("Load Music", self._load_music),
                                                  ("Load Sound", self._load_sound)])
@@ -82,17 +76,27 @@ class SoundPlayerScreen(Screen):
             if sound_name:
                 self._pickle_sound(path)
 
+    def _init_music(self):
+        """ initialize the individual music chosen earlier """
+        self._music_box = pygame.Rect(0, 0, BOX_WIDTH, BOX_HEIGHT)
+        self._music_function_buttons = [
+            Button("|>", (self._music_box.right, 0),
+                   BUTTON_SIZE, self._play_music),
+            Button("||", (self._music_box.right + BUTTON_WIDTH, 0),
+                   BUTTON_SIZE, self._pause_music),
+            Button("X", (self._music_box.right + 2*BUTTON_WIDTH, 0),
+                   BUTTON_SIZE, self._stop_music)]
+
+        path = os.path.join(self.music_loader.root, pickle.load(open("save.p", "rb")))
+        self._pickle_music(path)
+        print(path + "from init")
+
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
         path = self.music_loader.file_dialog()
         if path != "":
-            if pygame.mixer.music.get_busy():
-                pygame.mixer.music.stop()
-            self._music = pygame.mixer.music.load(path)
-            self._music_name = os.path.basename(path)
-            pickle.dump(self._save_music, open("save.p", "wb"))
-            #using pickle we were able to save into _save_music
-            print(str(self._music_name))
+            self._pickle_music(path)
+            print(path + "from load")
 
     def _load_sound(self):
         """" Loads the sound file from a pop-up dialog box """
@@ -111,6 +115,13 @@ class SoundPlayerScreen(Screen):
         self._sound_names.insert(self._sound_iterator, os.path.basename(path))
         pickle.dump(self._sound_names, open("save.waid", "wb"))
         self._sound_iterator += 1
+
+    def _pickle_music(self, path):
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.stop()
+        self._music = pygame.mixer.music.load(path)
+        self._music_name = os.path.basename(path)
+        pickle.dump(self._music_name, open("save.p", "wb"))
 
     def _draw(self, screen):
         """ Draws to the screen """

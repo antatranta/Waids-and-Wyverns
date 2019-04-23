@@ -22,6 +22,10 @@ class FileLoader:
         Tk().withdraw()
         filetypes = [("Files", [f"*{suffix}" for suffix in self.filetypes]), ("All Files", "*")]
         return filedialog.askopenfilename(initialdir=self.root, filetypes=filetypes)
+        
+        # for mac users (antonio and seth) to run without crashing 
+        # print(self.get_files())
+        # return self.root + "/" + input() 
 
     def get_files(self):
         """Returns a list of all files of this loader."""
