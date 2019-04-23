@@ -1,4 +1,6 @@
 """ All utilities and classes for Map and Character Graphical Display """
+import pickle
+import os
 
 import pygame
 
@@ -9,7 +11,7 @@ from .gui.utils import DraggableMixin, DragAndScaleMixin, load_image, draw_text
 
 class MapAndCharacterScreen(Screen):
     """ Class to start Map and Character Screen """
-
+    # pylint: disable=too-many-instance-attributes
     MAX_ZOOM = 5.0
     MIN_ZOOM = 1.0
 
@@ -18,12 +20,17 @@ class MapAndCharacterScreen(Screen):
 
     def __init__(self):
         super().__init__()
-        self._characters = []
-        self._map = None
+        self.path_save_char = os.path.join(".", "assets", "saves", "characters.pkl")
+        self.path_save_maps = os.path.join(".", "assets", "saves", "maps.pkl")
+
+        self._characters = pickle.load(open(self.path_save_char, "rb"))\
+            if os.path.isfile(self.path_save_char) else []
+        self._map = load_image(pickle.load(open(self.path_save_maps, "rb")),
+                               scale=(self.screen_width, self.screen_height)) \
+            if os.path.isfile(self.path_save_maps) else None
         self._remove_mode = False
         self.zoom = 1.0
         self._zoom_offset = (0, 0)
-
         self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
@@ -43,13 +50,13 @@ class MapAndCharacterScreen(Screen):
     def _load_map(self):
         path = self.map_loader.file_dialog()
         if path != "":
+            pickle.dump(path, open(self.path_save_maps, "wb+"))
             self._map = load_image(path, scale=(self.screen_width, self.screen_height))
 
     def _load_character(self):
         path = self.character_loader.file_dialog()
         if path != "":
-            img = load_image(path)
-            self._characters.append(_Character(img, zoom=self.zoom, zoom_offset=self.zoom_offset))
+            self._characters.append(_Character(path, zoom=self.zoom, zoom_offset=self.zoom_offset))
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
@@ -118,6 +125,7 @@ class MapAndCharacterScreen(Screen):
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
+                    pickle.dump(self._characters, open(self.path_save_char, "wb+"))
                     self.close()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -134,19 +142,23 @@ class _Character(DragAndScaleMixin):
 
     def __init__(self, img, pos=(0, 0), size=(100, 100), zoom=1.0, zoom_offset=(0, 0)):
         # pylint: disable=too-many-arguments
-        self.full_res_img = img
+        self.full_res_img = load_image(img)
         self._zoom = None
         self._pos = pos
 
         self._size = size
-        self.img = pygame.transform.smoothscale(img, size)
+        self._img_path = img
+        self.img = load_image(img, size)
         self.zoom_offset = zoom_offset
         self.zoom = zoom
 
-        def update_pos(pos):
-            self.pos = pos
+        DragAndScaleMixin.__init__(self, self._get_rect, self._update_pos)
 
-        DragAndScaleMixin.__init__(self, lambda: self.rect, update_pos)
+    def _update_pos(self, pos):
+        self.pos = pos
+
+    def _get_rect(self):
+        return self.rect
 
     @property
     def rect(self):
@@ -197,3 +209,18 @@ class _Character(DragAndScaleMixin):
         self.img = pygame.transform.smoothscale(self.full_res_img,
                                                 (int(self.size[0] * self.zoom),
                                                  int(self.size[1] * self.zoom)))
+
+    def __getstate__(self):
+        """Export function for pickle."""
+        state = self.__dict__.copy()
+        state['full_res_img'] = None
+        state['img'] = None
+        state['zoom_offset'] = (0, 0)
+        state['_zoom'] = 1.0
+        return state
+
+    def __setstate__(self, newstate):
+        """Import function for pickle."""
+        self.__dict__.update(newstate)
+        self.full_res_img = load_image(self._img_path)
+        self._resize_img()
