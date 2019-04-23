@@ -65,10 +65,13 @@ class SoundPlayerScreen(Screen):
 
             self._sound_channels.append(pygame.mixer.Channel(i))
             self._sound_pauses.append(False)
-        for sound_name in pickle.load(open("save.waid", "rb")):
-            path = os.path.join(self.sound_loader.root, sound_name)
-            if sound_name:
-                self._pickle_sound(path)
+        sound_path = os.path.join(".", "assets", "saves", "sounds.pkl")
+        if os.path.isfile(sound_path):
+            for sound_name in pickle.load(open(sound_path,
+                                               "rb")):
+                path = os.path.join(self.sound_loader.root, sound_name)
+                if sound_name:
+                    self._pickle_sound(path)
 
     def _init_music(self):
         """ initialize the individual music chosen earlier """
@@ -80,9 +83,12 @@ class SoundPlayerScreen(Screen):
                    BUTTON_SIZE, self._pause_music),
             Button("X", (self._music_box.right + 2*BUTTON_WIDTH, 0),
                    BUTTON_SIZE, self._stop_music)]
-
-        path = os.path.join(self.music_loader.root, pickle.load(open("save.p", "rb")))
-        self._pickle_music(path)
+        music_path = os.path.join(".", "assets", "saves", "music.pkl")
+        if os.path.isfile(music_path):
+            path = os.path.join(self.music_loader.root,
+                                pickle.load(open(music_path,
+                                                 "rb")))
+            self._pickle_music(path)
 
     def _load_music(self):
         """ Loads the music file from a pop-up dialog box """
@@ -105,7 +111,8 @@ class SoundPlayerScreen(Screen):
         self._sounds.insert(self._sound_iterator, pygame.mixer.Sound(path))
         self._sound_names.pop(self._sound_iterator)
         self._sound_names.insert(self._sound_iterator, os.path.basename(path))
-        pickle.dump(self._sound_names, open("save.waid", "wb"))
+        pickle.dump(self._sound_names, open(os.path.join(".", "assets", "saves", "sounds.pkl"),
+                                            "wb"))
         self._sound_iterator += 1
 
     def _pickle_music(self, path):
@@ -113,7 +120,8 @@ class SoundPlayerScreen(Screen):
             pygame.mixer.music.stop()
         self._music = pygame.mixer.music.load(path)
         self._music_name = os.path.basename(path)
-        pickle.dump(self._music_name, open("save.p", "wb"))
+        pickle.dump(self._music_name, open(os.path.join(".", "assets", "saves", "music.pkl"),
+                                           "wb"))
 
     def _draw(self, screen):
         """ Draws to the screen """
