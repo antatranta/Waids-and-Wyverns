@@ -215,13 +215,12 @@ class _Character(DragAndScaleMixin):
         state = self.__dict__.copy()
         state['full_res_img'] = None
         state['img'] = None
+        state['zoom_offset'] = (0, 0)
         state['_zoom'] = 1.0
-        state['_zoom_offset'] = (0, 0)
         return state
 
     def __setstate__(self, newstate):
         """Import function for pickle."""
-        newstate['full_res_img'] = load_image(newstate['_img_path'])
-        newstate['img'] = load_image(newstate['_img_path'], scale=newstate['_size'])
         self.__dict__.update(newstate)
+        self.full_res_img = load_image(self._img_path)
         self._resize_img()
