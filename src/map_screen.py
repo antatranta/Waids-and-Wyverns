@@ -11,23 +11,27 @@ from .gui.utils import DraggableMixin, DragAndScaleMixin, load_image, draw_text
 
 class MapAndCharacterScreen(Screen):
     """ Class to start Map and Character Screen """
-
+    # pylint: disable=too-many-instance-attributes
     MAX_ZOOM = 5.0
     MIN_ZOOM = 1.0
 
     map_loader = MapFileLoader()
     character_loader = CharacterFileLoader()
-    temp_filename = "tmp_img.png"
+    # temp_filename = "tmp_img.png"
 
     def __init__(self):
         super().__init__()
-        self._characters = pickle.load(open("characters.pkl", "rb")) if os.path.isfile("characters.pkl") else []
+        self.path_save_char = os.path.join(".", "assets", "saves", "characters.pkl")
+        self.path_save_maps = os.path.join(".", "assets", "saves", "maps.pkl")
+        self._characters = pickle.load(open(self.path_save_char, "rb"))\
+            if os.path.isfile(self.path_save_char) else []
         # self._characters = []
-        self._map = None
+        self._map = load_image(pickle.load(open(self.path_save_maps, "rb")),
+                               scale=(self.screen_width, self.screen_height)) \
+            if os.path.isfile(self.path_save_maps) else None
         self._remove_mode = False
         self.zoom = 1.0
         self._zoom_offset = (0, 0)
-
         self._buttons = self._init_buttons([("Add Character", self._load_character),
                                             ("Change Map", self._load_map),
                                             ("Toggle Remove", self._toggle_remove_mode)])
@@ -46,10 +50,10 @@ class MapAndCharacterScreen(Screen):
 
     def _load_map(self):
         path = self.map_loader.file_dialog()
-
         if path != "":
+            pickle.dump(path, open(self.path_save_maps, "wb+"))
             self._map = load_image(path, scale=(self.screen_width, self.screen_height))
-            pygame.image.save(self._map, MapAndCharacterScreen.temp_filename)
+            # pygame.image.save(self._map, MapAndCharacterScreen.temp_filename)
 
     def _load_character(self):
         path = self.character_loader.file_dialog()
@@ -58,8 +62,10 @@ class MapAndCharacterScreen(Screen):
 
     def _draw(self, screen):
         """ Draw function to draw all necessary maps and characters on the screen """
-        # screen.blit(load_image(MapAndCharacterScreen.temp_filename, scale=(self.screen_width, self.screen_height)), self.zoom_offset)
-        self._map = load_image(MapAndCharacterScreen.temp_filename, scale=(self.screen_width, self.screen_height))
+        # screen.blit(load_image(MapAndCharacterScreen.temp_filename,\
+        # scale=(self.screen_width, self.screen_height)), self.zoom_offset)
+        # self._map = load_image(MapAndCharacterScreen.temp_filename,\
+        # scale=(self.screen_width, self.screen_height))
         if self._map:
             img = pygame.transform.smoothscale(self._map, (int(screen.get_width() * self.zoom),
                                                            int(screen.get_height() * self.zoom)))
@@ -125,7 +131,7 @@ class MapAndCharacterScreen(Screen):
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
-                    pickle.dump(self._characters, open("characters.pkl", "wb+"))
+                    pickle.dump(self._characters, open(self.path_save_char, "wb+"))
                     self.close()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
