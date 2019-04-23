@@ -23,6 +23,7 @@ class MapAndCharacterScreen(Screen):
         super().__init__()
         self.path_save_char = os.path.join(".", "assets", "saves", "characters.pkl")
         self.path_save_maps = os.path.join(".", "assets", "saves", "maps.pkl")
+
         self._characters = pickle.load(open(self.path_save_char, "rb"))\
             if os.path.isfile(self.path_save_char) else []
         # self._characters = []
