@@ -26,10 +26,7 @@ class SoundPlayerScreen(Screen):
     def __init__(self):
         super().__init__()
         pygame.mixer.set_num_channels(NUM_OF_SOUND_CHANNELS)
-        #self._save_music = pickle.load(open("save.p", "rb+"))
-        self._save_music = {} # a list to keep track of what was loaded in
-        #self._save_sounds = pickle.load(open("save.waid", "rb+"))
-        #1. run with this first if you can
+        self._save_music = {}
         self._save_sounds = {}
         self._music = None
         self._music_name = ""
