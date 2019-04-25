@@ -32,6 +32,7 @@ share/python-wheels/
 MANIFEST
 /assets/media/notes/
 /assets/saves/
+/assets/macros/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

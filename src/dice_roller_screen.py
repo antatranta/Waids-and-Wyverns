@@ -3,6 +3,7 @@
 
 import re
 import os
+import pickle
 
 import pygame
 
@@ -15,6 +16,9 @@ from .dice import roll_results, advantage_disadvantage
 class DiceRollerScreen(Screen):
     """Class to start graphical dice roller"""
 
+    macro_path = os.path.join(".", "assets", "macros", "macros.txt")
+    custom_macro_path = os.path.join(".", "assets", "macros", "custom_macros.pkl")
+
     def __init__(self):
         super().__init__()
 
@@ -25,6 +29,9 @@ class DiceRollerScreen(Screen):
         self._dice = [] # blank list
         self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
         self._macros = self._load_macros()
+
+        if os.path.isfile(self.custom_macro_path):
+            self._macros.update(pickle.load(open(self.custom_macro_path, "rb")))
 
         for sides in self._dicesides:
             # increment so that you can append to blank list
@@ -37,9 +44,10 @@ class DiceRollerScreen(Screen):
         self._disadvantage_button = Button("Disadvantage", (advantage_x + 120, 350), (120, 30),
                                            self._roll_disadvantage)
 
-        self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
-        self._macro_button = Button("Macro", (250, 400), (100, 50), self._use_macro)
-        self._macro_input = TextBox((380, 400), (200, 50), "Macro Name")
+        self._roll_button = Button("Roll", (75, 400), (150, 60), self._die_roll)
+        self._macro_button = Button("Use", (300, 430), (150, 30), self._use_macro)
+        self._save_macro_button = Button("Save", (450, 430), (150, 30), self._save_macro)
+        self._macro_input = TextBox((300, 400), (300, 30), label="Macro: ")
 
     def _draw(self, screen):
         for die in self._dice:
@@ -62,6 +70,7 @@ class DiceRollerScreen(Screen):
 
         self._roll_button.draw(screen)
         self._macro_button.draw(screen)
+        self._save_macro_button.draw(screen)
         self._macro_input.draw(screen)
 
     def _die_roll(self):
@@ -74,7 +83,7 @@ class DiceRollerScreen(Screen):
 
     def _load_macros(self):
         macros = {}
-        with open(os.path.join("assets", "macros.txt"), "r") as filestream:
+        with open(self.macro_path, "r") as filestream:
             for line in filestream:
                 macro_data = line.split(",")
 
@@ -85,9 +94,20 @@ class DiceRollerScreen(Screen):
                 macros[name] = _Macro(name, dice_counts, modifier)
         return macros
 
+    def _save_macro(self):
+        name = self._macro_input.value
+        dice_counts = [int(die.input.value or 0) for die in self._dice]
+        modifier = sum([int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
+                        for die in self._dice])
+
+        if any(dice_counts):
+            self._macros[name] = _Macro(name, dice_counts, modifier)
+            pickle.dump(self._macros, open(self.custom_macro_path, "wb+"))
+            self._macro_output = f'saved macro "{name}"'
+
     def _use_macro(self):
         macro_name = self._macro_input.value
-        self._macro_output = f"Invalid macro \"{macro_name}\""
+        self._macro_output = f'Invalid macro "{macro_name}"'
 
         if macro_name in self._macros:
             self._macro_output = self._macros[macro_name].roll()
@@ -106,6 +126,7 @@ class DiceRollerScreen(Screen):
 
         self._roll_button.handle_events(events)
         self._macro_button.handle_events(events)
+        self._save_macro_button.handle_events(events)
         self._advantage_button.handle_events(events)
         self._disadvantage_button.handle_events(events)
         self._macro_input.handle_events(events)
