@@ -204,6 +204,7 @@ class _Macro:
         self.mod = mod
 
     def roll(self):
+        """Get string representing result of rolling this macro."""
         dice_rolls = []
         for times, sides in zip(self.dice_count, self.die_sides):
             dice_rolls.extend(roll_results(times, f"d{sides}", False, 0)[0])
