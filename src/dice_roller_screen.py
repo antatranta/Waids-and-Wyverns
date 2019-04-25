@@ -24,6 +24,7 @@ class DiceRollerScreen(Screen):
         self._advantage_result = None
         self._dice = [] # blank list
         self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
+        self._macros = self._load_macros()
 
         for sides in self._dicesides:
             # increment so that you can append to blank list
@@ -37,7 +38,7 @@ class DiceRollerScreen(Screen):
                                            self._roll_disadvantage)
 
         self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
-        self._macro_button = Button("Macro", (250, 400), (100, 50), self._load_macro)
+        self._macro_button = Button("Macro", (250, 400), (100, 50), self._use_macro)
         self._macro_input = TextBox((380, 400), (200, 50), "Macro Name")
 
     def _draw(self, screen):
@@ -71,22 +72,25 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-    def _load_macro(self):
-        # Receives input from user
-        input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
-        self._macro_output = f"Invalid macro \"{input_val}\""
-
+    def _load_macros(self):
+        macros = {}
         with open(os.path.join("assets", "macros.txt"), "r") as filestream:
             for line in filestream:
-                currentline = line.split(",")
-                # Check if macro name is first element of each line
+                macro_data = line.split(",")
 
-                if input_val.lower() != currentline[0].lower():
-                    continue
+                name = macro_data[0]
+                dice_counts = [int(d) for d in macro_data[1:-1]]
+                modifier = int(macro_data[-1])
 
-                self._macro_output = _Macro(currentline[1],
-                                            [int(d) for d in currentline[1:-1]],
-                                            int(currentline[-1])).roll()
+                macros[name] = _Macro(name, dice_counts, modifier)
+        return macros
+
+    def _use_macro(self):
+        macro_name = self._macro_input.value
+        self._macro_output = f"Invalid macro \"{macro_name}\""
+
+        if macro_name in self._macros:
+            self._macro_output = self._macros[macro_name].roll()
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
