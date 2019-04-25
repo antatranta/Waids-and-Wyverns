@@ -44,7 +44,9 @@ class DiceRollerScreen(Screen):
         self._disadvantage_button = Button("Disadvantage", (advantage_x + 120, 350), (120, 30),
                                            self._roll_disadvantage)
 
-        self._roll_button = Button("Roll", (75, 400), (150, 60), self._die_roll)
+        self._roll_button = Button("Roll", (50, 400), (150, 60), self._die_roll)
+        self._reset_button = Button("Clear", (200, 400), (70, 60), self._reset_dice)
+
         self._macro_button = Button("Use", (300, 430), (150, 30), self._use_macro)
         self._save_macro_button = Button("Save", (450, 430), (150, 30), self._save_macro)
         self._macro_input = TextBox((300, 400), (300, 30), label="Macro: ")
@@ -69,6 +71,7 @@ class DiceRollerScreen(Screen):
             self._draw_macro_result(screen, (480, 390))
 
         self._roll_button.draw(screen)
+        self._reset_button.draw(screen)
         self._macro_button.draw(screen)
         self._save_macro_button.draw(screen)
         self._macro_input.draw(screen)
@@ -80,6 +83,12 @@ class DiceRollerScreen(Screen):
             modifier = int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
+
+    def _reset_dice(self):
+        self._die_result = None
+        for die in self._dice:
+            die.input.value = ""
+            die.modifier.value = ""
 
     def _load_macros(self):
         macros = {}
@@ -125,6 +134,7 @@ class DiceRollerScreen(Screen):
             die.handle_events(events)
 
         self._roll_button.handle_events(events)
+        self._reset_button.handle_events(events)
         self._macro_button.handle_events(events)
         self._save_macro_button.handle_events(events)
         self._advantage_button.handle_events(events)
