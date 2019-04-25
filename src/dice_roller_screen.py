@@ -129,6 +129,7 @@ class DiceRollerScreen(Screen):
 
     def _handle_events(self, events):
         super()._handle_events(events)
+        macro_selected = self._macro_input.selected
 
         for die in self._dice:
             die.handle_events(events)
@@ -142,10 +143,16 @@ class DiceRollerScreen(Screen):
         self._macro_input.handle_events(events)
 
         for event in events:
-            if event.type == pygame.KEYUP: # if key is released
+            if event.type == pygame.KEYUP:
                 self._roll_button.handle_events(events)
-                if event.key == pygame.K_ESCAPE: # to check if it was the escape key
+                if event.key == pygame.K_ESCAPE:
                     self.close()
+
+            if event.type == pygame.KEYDOWN:
+                # must use KEYDOWN because textbox deselects on KEYDOWN
+                if event.key == pygame.K_RETURN and macro_selected:
+                    self._use_macro()
+                    self._macro_input.selected = True
 
     def _draw_results(self, screen, results, pos):
         output = ""
