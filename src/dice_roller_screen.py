@@ -100,7 +100,7 @@ class DiceRollerScreen(Screen):
                 dice_counts = [int(d) for d in macro_data[1:-1]]
                 modifier = int(macro_data[-1])
 
-                macros[name] = _Macro(name, dice_counts, modifier)
+                macros[name.lower()] = _Macro(name, dice_counts, modifier)
         return macros
 
     def _save_macro(self):
@@ -110,12 +110,12 @@ class DiceRollerScreen(Screen):
                         for die in self._dice])
 
         if any(dice_counts):
-            self._macros[name] = _Macro(name, dice_counts, modifier)
+            self._macros[name.lower()] = _Macro(name, dice_counts, modifier)
             pickle.dump(self._macros, open(self.custom_macro_path, "wb+"))
             self._macro_output = f'saved macro "{name}"'
 
     def _use_macro(self):
-        macro_name = self._macro_input.value
+        macro_name = self._macro_input.value.lower()
         self._macro_output = f'Invalid macro "{macro_name}"'
 
         if macro_name in self._macros:
