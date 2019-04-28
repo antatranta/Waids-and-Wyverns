@@ -1,11 +1,10 @@
 """ All utilities and classes for Weather and Time graphical display """
 
 import pygame
-import tkinter as tk
 
-from tkinter import ttk
 from .gui.screen import Screen
-from .gui.utils import draw_text
+from .gui.textbox import TextBox, ALPHA_KEYS, NUMERIC_KEYS
+from .gui.utils import draw_text, Button
 
 
 class WeatherAndTimeScreen(Screen):
@@ -13,37 +12,43 @@ class WeatherAndTimeScreen(Screen):
 
     def __init__(self):
         super().__init__()
-        self._weather_list = ["calm", "cold", "cold snap", "downpour", "warm",
-                              "heat wave", "hot", "moderate", "windstorm",
-                              "rain", "snow", "heavy snow", "sleet", "hail",
-                              "blizzard", "hurricane", "tornado", "duststorm",
-                              "snowstorm", "thunderstorm", "light wind",
-                              "moderate wind", "strong wind", "severe wind",
-                              "windstorm"]
-        self._time_list = []
-        self._am_pm = ["A.M.", "P.M."]
-        self._init_time()
-        self._pop_up_window = tk.Tk()
-        self._pop_up_window.geometry('100x100')
+        self._weather = "calm"
+        self._hour = "12"
+        self._minute = "00"
+        self._time_of_day = "P.M."
 
-    def _init_time(self):
-        for i in range(12):
-            self._time_list.append(str(i + 1) + ":00")
+        self._weather_box = TextBox((0, 0), (200, 30), "calm", allowed=ALPHA_KEYS)
+        self._hour_box = TextBox((0, 0), (60, 30), "12", allowed=NUMERIC_KEYS, center=True)
+        self._minute_box = TextBox((0, 0), (60, 30), "00", allowed=NUMERIC_KEYS, center=True)
+
+        self._am_pm_buttons = [Button("A.M.", (0, 0), (0, 0), self._set_am_pm, params=["A.M."]),
+                               Button("P.M.", (0, 0), (0, 0), self._set_am_pm, params=["P.M."])]
+        self._change_button = Button("Change", (0, 0), (0, 0), self._change_weather_and_time)
+
+    def _valid_input(self):
+        if not (self._weather_box.value or self._hour_box or self._minute_box):
+            return False
+        if self._hour_box > 12:
+            pass
+
+        return True
+
+    def _set_am_pm(self, time_of_day):
+        self._time_of_day = time_of_day
+
+    def _change_weather_and_time(self):
+        if self._valid_input:
+            pass
 
     def _draw(self, screen):
-        pass
-
-    def _weather_pop_up(self):
-        weather_label = tk.Label(self._pop_up_window, text="Choose the weather")
-        weather_label.grid(column=0, row=0)
-
-        weather_drop_down = ttk.Combobox(self._pop_up_window, values=self._weather_list)
-        weather_drop_down.grid(column=0, row=1)
-        weather_drop_down.current(0)
-
+        for choose_button in self._choose_buttons:
+            choose_button.draw(screen)
 
     def _handle_events(self, events):
         super()._handle_events(events)
+
+        for choose_button in self._choose_buttons:
+            choose_button.handle_events(events)
 
         for event in events:
             if event.type == pygame.KEYUP:
