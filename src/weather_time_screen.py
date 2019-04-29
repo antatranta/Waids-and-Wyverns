@@ -29,9 +29,11 @@ class WeatherAndTimeScreen(Screen):
         self._change_button = Button("Change", (0, 0), (0, 0), self._change_weather_and_time)
 
     def _set_am_pm(self, time_of_day):
+        """ Set the AM or PM of the time """
         self._time_of_day = time_of_day
 
     def _change_weather_and_time(self):
+        """ Change the weather and time if the input is valid """
         if self._valid_input:
             # if its blank input then keep the same value shown already
             if self._weather_box.value == '':
@@ -53,13 +55,14 @@ class WeatherAndTimeScreen(Screen):
             self._weather_box.value, self._hour_box.value, self._minute_box.value = ('', '', '')
 
     def _valid_input(self):
+        """ Checks to see if the textbox input is valid """
         # need at least one input
         if not (self._weather_box.value or self._hour_box.value or self._minute_box.value):
             return False
 
         # check integer bounds for hour
         if self._hour_box.value != '':
-            if int(self._hour_box.value) > 12:
+            if int(self._hour_box.value) < 1 or int(self._hour_box.value) > 12:
                 return False
 
         # check integer bounds for minutes
@@ -70,13 +73,16 @@ class WeatherAndTimeScreen(Screen):
         return True
 
     def _update(self):
+        """ Update the change button to gray it out or not """
         self._change_button.enabled = self._valid_input()
 
     def _draw(self, screen):
+        """ Draw the textbox input and text on screen """
         self._draw_input(screen, (0, self.screen_height - self._weather_box.rect.height))
         self._draw_text(screen)
 
     def _draw_input(self, screen, pos):
+        """ Draw the textbox input on the bottom """
         self._weather_box.rect.top = pos[1]
         self._hour_box.rect.top = pos[1]
         self._minute_box.rect.top = pos[1]
@@ -108,6 +114,7 @@ class WeatherAndTimeScreen(Screen):
         self._minute_box.draw(screen)
 
     def _draw_text(self, screen):
+        """ Draw the weather and time text in the center of the screen """
         weather_text = "Weather: " + self._weather
         time_text = "Time: " + self._hour + ":" + self._minute + " " + self._time_of_day
 
@@ -117,6 +124,7 @@ class WeatherAndTimeScreen(Screen):
         draw_text(screen, self._font, time_text, CENTER_OF_SCREEN, center=True)
 
     def _handle_events(self, events):
+        """ Handle events on the screen """
         super()._handle_events(events)
 
         self._weather_box.handle_events(events)
