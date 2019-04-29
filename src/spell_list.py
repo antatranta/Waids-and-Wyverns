@@ -1,6 +1,7 @@
 """All utilities for Spell List"""
 
 import os
+import json
 
 from .gui.screen import Screen
 from .gui.utils import draw_text
@@ -11,21 +12,18 @@ class SpellList(Screen):
 
     def __init__(self):
         super().__init__()
-        self.spell_list = {}
+        self.spell_list = self._load_spell_list()
 
     def _draw(self, screen):
-        for spells in self.spell_list:
-            draw_text(screen, self._font, spells, (0, self._advantage_button.rect.top))
+        temp = ''
+        for spellsname, info in self.spell_list.items():
+            temp += spellsname + ' ' + str(info['level']) + "\n"
+        draw_text(screen, self._font, temp, (0, 0))
 
     def _load_spell_list(self):
-        # spell_path = os.path.join("spellslist.txt")
-        spell_path = os.path.join(".", "assets", "spellslist.txt")
-        with open(spell_path, "r") as filestream:
-            for line in filestream:
-                spell, level = line.strip().split(",")
-                self.spell_list[spell.strip()] = level.strip()
-        filestream.close()
-        # print(spell_list)
+        spell_path = os.path.join(".", "assets", "spells.json")
+        spell_file = json.load(open(spell_path, 'r'))
+        return spell_file
 
     def search_spell(self, spell_name):
         """Returns searched spell"""
@@ -34,3 +32,4 @@ class SpellList(Screen):
             return self.spell_list.get(spell_name)
         else:
             return error_msg
+
