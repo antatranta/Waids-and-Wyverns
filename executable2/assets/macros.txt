@@ -1,0 +1,10 @@
+fire bolt,3,0,0,0,0,0,0,-33
+dancing light,0,0,3,0,0,0,0,9
+poison spray,0,0,0,0,2,0,0,24
+resistance,0,0,0,0,0,3,0,30
+mage armor,0,0,0,2,0,0,0,11
+thorn whip,0,0,0,4,0,0,0,13
+shield of faith,0,0,0,0,0,0,2,50
+flame blade,0,0,0,0,0,2,0,-30
+spike growth,0,0,3,0,0,0,0,-12
+dispel magic,0,0,0,4,0,0,0,15
