@@ -46,8 +46,10 @@ class SpellList(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
+                self.text_y = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:
                     self.text_y -= self.speed
                 if event.button == 5:
                     self.text_y += self.speed
+                    self.text_y = min(self.text_y, 0)
