@@ -31,7 +31,7 @@ class SpellList(Screen):
     @staticmethod
     def _load_spell_list():
         spell_path = os.path.join(".", "assets", "spells.json")
-        spell_file = json.load(open(spell_path, 'r'))
+        spell_file = json.load(open(spell_path, 'r', encoding='utf-8'))
         return spell_file
 
     def _handle_events(self, events):
