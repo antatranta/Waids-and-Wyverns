@@ -139,6 +139,7 @@ class WeatherAndTimeScreen(Screen):
         for event in events:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
-                    self._change_weather_and_time()
+                    if self._valid_input():
+                        self._change_weather_and_time()
                 if event.key == pygame.K_ESCAPE:
                     self.close()
