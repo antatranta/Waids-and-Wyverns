@@ -4,7 +4,7 @@
 import pygame
 
 from .gui.screen import Screen
-from .gui.textbox import TextBox, ALPHA_KEYS, NUMERIC_KEYS
+from .gui.textbox import TextBox, PRINTABLE_KEYS, NUMERIC_KEYS
 from .gui.utils import draw_text, Button
 
 CENTER_OF_SCREEN = (Screen.screen_width / 2, Screen.screen_height / 2)
@@ -20,7 +20,7 @@ class WeatherAndTimeScreen(Screen):
         self._minute = "00"
         self._time_of_day = "P.M."
 
-        self._weather_box = TextBox((0, 0), (200, 30), "calm", allowed=ALPHA_KEYS)
+        self._weather_box = TextBox((0, 0), (200, 30), "calm", allowed=PRINTABLE_KEYS)
         self._hour_box = TextBox((0, 0), (50, 30), "12", allowed=NUMERIC_KEYS, center=True)
         self._minute_box = TextBox((0, 0), (50, 30), "00", allowed=NUMERIC_KEYS, center=True)
 
