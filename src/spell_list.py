@@ -14,9 +14,11 @@ class SpellList(Screen):
 
     def __init__(self):
         super().__init__()
-        # pygame.
+        self.text_x = 0
+        self.text_y = 0
+        self.speed = 2
         self.spell_list = self._load_spell_list()
-        self._search_bar = TextBox((380, 400), (200, 50), "", label="Filter Spell(s)")
+        self._search_bar = TextBox((380, 10), (200, 50), "", label="Filter Spell(s)")
 
     def _draw(self, screen):
         spell = ''
@@ -25,11 +27,13 @@ class SpellList(Screen):
                     or self._search_bar.value == str(info['level']):
                 spell += spellsname + ' ' + str(info['level']) + "\n"
         if self._search_bar.value:
-            draw_text(screen, self._font, spell, (0, 0))
+            draw_text(screen, self._font, spell, (self.text_x, self.text_y))
         self._search_bar.draw(screen)
 
     @staticmethod
     def _load_spell_list():
+        """Loads spell list from .json file"""
+
         spell_path = os.path.join(".", "assets", "spells.json")
         spell_file = json.load(open(spell_path, 'r', encoding='utf-8'))
         return spell_file
@@ -42,3 +46,8 @@ class SpellList(Screen):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.close()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    self.text_y -= self.speed
+                if event.button == 5:
+                    self.text_y += self.speed
