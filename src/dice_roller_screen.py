@@ -3,6 +3,7 @@
 
 import re
 import os
+import pickle
 
 import pygame
 
@@ -15,16 +16,22 @@ from .dice import roll_results, advantage_disadvantage
 class DiceRollerScreen(Screen):
     """Class to start graphical dice roller"""
 
+    macro_path = os.path.join(".", "assets", "macros", "macros.txt")
+    custom_macro_path = os.path.join(".", "assets", "macros", "custom_macros.pkl")
+
     def __init__(self):
         super().__init__()
 
         y_pos = 0
-        self._output = None
+        self._macro_output = None
         self._die_result = None
         self._advantage_result = None
-        self._macro_result = None
         self._dice = [] # blank list
         self._dicesides = [4, 6, 8, 10, 12, 20, 100] # dices in order from smallest to largest
+        self._macros = self._load_macros()
+
+        if os.path.isfile(self.custom_macro_path):
+            self._macros.update(pickle.load(open(self.custom_macro_path, "rb")))
 
         for sides in self._dicesides:
             # increment so that you can append to blank list
@@ -37,9 +44,12 @@ class DiceRollerScreen(Screen):
         self._disadvantage_button = Button("Disadvantage", (advantage_x + 120, 350), (120, 30),
                                            self._roll_disadvantage)
 
-        self._roll_button = Button("Roll", (75, 400), (100, 50), self._die_roll)
-        self._macro_button = Button("Macro", (250, 400), (100, 50), self._load_macro)
-        self._macro_input = TextBox((380, 400), (200, 50), "Macro Name")
+        self._roll_button = Button("Roll", (50, 400), (150, 60), self._die_roll)
+        self._reset_button = Button("Clear", (200, 400), (70, 60), self._reset_dice)
+
+        self._macro_button = Button("Use", (300, 430), (150, 30), self._use_macro)
+        self._save_macro_button = Button("Save", (450, 430), (150, 30), self._save_macro)
+        self._macro_input = TextBox((300, 400), (300, 30), label="Macro: ")
 
     def _draw(self, screen):
         for die in self._dice:
@@ -57,11 +67,13 @@ class DiceRollerScreen(Screen):
             self._draw_advantage_result(screen, self._advantage_result,
                                         (results_x, self._disadvantage_button.rect.top))
 
-        if self._macro_result is not None:
+        if self._macro_output is not None:
             self._draw_macro_result(screen, (480, 390))
 
         self._roll_button.draw(screen)
+        self._reset_button.draw(screen)
         self._macro_button.draw(screen)
+        self._save_macro_button.draw(screen)
         self._macro_input.draw(screen)
 
     def _die_roll(self):
@@ -72,36 +84,42 @@ class DiceRollerScreen(Screen):
             self._die_result.append(roll_results(times, f"d{die.sides}",
                                                  die.modifier.value != "", modifier))
 
-    def _load_macro(self):
-        self._macro_result = []
-        # Receives input from user
-        input_val = str(self._macro_input.value)  # if self._macro_input.value != "" else 0
-        self._output = f"Invalid macro \"{input_val}\""
+    def _reset_dice(self):
+        self._die_result = None
+        for die in self._dice:
+            die.input.value = ""
+            die.modifier.value = ""
 
-        with open(os.path.join("assets", "macros.txt"), "r") as filestream:
+    def _load_macros(self):
+        macros = {}
+        with open(self.macro_path, "r") as filestream:
             for line in filestream:
-                currentline = line.split(",")
-                # Check if macro name is first element of each line
+                macro_data = line.split(",")
 
-                if input_val.lower() != currentline[0].lower():
-                    continue
+                name = macro_data[0]
+                dice_counts = [int(d) for d in macro_data[1:-1]]
+                modifier = int(macro_data[-1])
 
-                for i, sides in enumerate(self._dicesides):
-                    if int(currentline[i+1]) != 0:
-                        if int(currentline[8]) != 0:
-                            self._macro_result.append(roll_results(
-                                int(currentline[i + 1]), "d" +
-                                str(sides), False, int(currentline[8])))
-                        else:
-                            self._macro_result.append(roll_results(
-                                int(currentline[i + 1]), "d" +
-                                str(sides), True, int(currentline[8])))
+                macros[name.lower()] = _Macro(name, dice_counts, modifier)
+        return macros
 
-                rolls = ' + '.join(str(e) for e in self._macro_result[0][0])
-                modifier = str(self._macro_result[0][1])
-                total = str(self._macro_result[0][2])
-                output = rolls + " + (" + modifier + ") =" + total
-                self._output = output
+    def _save_macro(self):
+        name = self._macro_input.value
+        dice_counts = [int(die.input.value or 0) for die in self._dice]
+        modifier = sum([int(die.modifier.value) if re.search(r"^-?\d+$", die.modifier.value) else 0
+                        for die in self._dice])
+
+        if any(dice_counts):
+            self._macros[name.lower()] = _Macro(name, dice_counts, modifier)
+            pickle.dump(self._macros, open(self.custom_macro_path, "wb+"))
+            self._macro_output = f'saved macro "{name}"'
+
+    def _use_macro(self):
+        macro_name = self._macro_input.value.lower()
+        self._macro_output = f'Invalid macro "{macro_name}"'
+
+        if macro_name in self._macros:
+            self._macro_output = self._macros[macro_name].roll()
 
     def _roll_advantage(self):
         self._advantage_result = advantage_disadvantage(True, "d20")
@@ -111,21 +129,30 @@ class DiceRollerScreen(Screen):
 
     def _handle_events(self, events):
         super()._handle_events(events)
+        macro_selected = self._macro_input.selected
 
         for die in self._dice:
             die.handle_events(events)
 
         self._roll_button.handle_events(events)
+        self._reset_button.handle_events(events)
         self._macro_button.handle_events(events)
+        self._save_macro_button.handle_events(events)
         self._advantage_button.handle_events(events)
         self._disadvantage_button.handle_events(events)
         self._macro_input.handle_events(events)
 
         for event in events:
-            if event.type == pygame.KEYUP: # if key is released
+            if event.type == pygame.KEYUP:
                 self._roll_button.handle_events(events)
-                if event.key == pygame.K_ESCAPE: # to check if it was the escape key
+                if event.key == pygame.K_ESCAPE:
                     self.close()
+
+            if event.type == pygame.KEYDOWN:
+                # must use KEYDOWN because textbox deselects on KEYDOWN
+                if event.key == pygame.K_RETURN and macro_selected:
+                    self._use_macro()
+                    self._macro_input.selected = True
 
     def _draw_results(self, screen, results, pos):
         output = ""
@@ -141,7 +168,7 @@ class DiceRollerScreen(Screen):
         draw_text(screen, self._font, f"{rolls[0]} vs {rolls[1]} => {value}", pos)
 
     def _draw_macro_result(self, screen, pos):
-        draw_text(screen, self._font, self._output, pos, center=True)
+        draw_text(screen, self._font, self._macro_output, pos, center=True)
 
 
 class _Dice:
@@ -173,3 +200,21 @@ class _Dice:
         """Handle events for this component."""
         self.input.handle_events(events)
         self.modifier.handle_events(events)
+
+class _Macro:
+
+    die_sides = [4, 6, 8, 10, 12, 20, 100]
+
+    def __init__(self, name, dice_count, mod):
+        self.name = name
+        self.dice_count = dice_count
+        self.mod = mod
+
+    def roll(self):
+        """Get string representing result of rolling this macro."""
+        dice_rolls = []
+        for times, sides in zip(self.dice_count, self.die_sides):
+            dice_rolls.extend(roll_results(times, f"d{sides}", False, 0)[0])
+
+        dice_rolls_string = " + ".join([str(roll) for roll in dice_rolls])
+        return f"{dice_rolls_string} + ({self.mod}) = {sum(dice_rolls) + self.mod}"
