@@ -1,5 +1,5 @@
 """ All utilities and classes for Sound Player Graphical Display """
-#pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 
 import os.path
 import math
