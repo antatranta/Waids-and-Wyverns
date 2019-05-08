@@ -11,4 +11,4 @@
 * 'app.exe' should run smoothly. Folder could be zipped to save space
 
 ## Link to Latest App Executable 
-* https://github.com/comp129-spr19/project2-waid/releases/tag/v0.1
+* https://github.com/antatranta/Waids_and_Wyverns/releases/tag/v1.0
