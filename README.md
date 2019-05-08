@@ -1,4 +1,4 @@
-# Project 2 WAID
+# Waids & Wyverns
 
 ## Testing
 * To run the entire test suite: `python test.py`
